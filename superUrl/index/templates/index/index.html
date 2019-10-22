@@ -1,10 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <meta name="keywords" content="你身边的资源助手"/>
+    <meta name="description" content="图片/音乐/电影搜索"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资源助手 - 为您提供快捷高效的服务</title>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/settings.js"></script>
+    <style>
+        #inp_search {
+            width: 200px;
+            height: 30px;
+        }
+
+        #bdsug {
+            width: 200px;
+            border: solid 1px rgba(80, 80, 80, 0.3);
+            margin: 0;
+            padding: 0;
+            position: absolute;
+        }
+
+        #bdsug ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        #bdsug ul li {
+            height: 30px;
+            line-height: 30px;
+            background-color: #fff;
+        }
+
+        #bdsug ul li:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+
 </head>
-<body>
+
+<body style="background-color:#f0f0f0;">
+<div class="container">
+    <button class="btn btn-default" id="btn_login" type="button">登陆</button>
+    <button class="btn btn-default" id="btn_register" type="button">注册</button>
+    <form class="form-horizontal" method="get" id="search" role="form">
+        <div class="input-group">
+            <input type="text" name="kw" id="inp_search" placeholder="歌曲名或专辑名进行搜索" class="form-control" value=""
+                   autocomplete="off">
+            <button class="btn btn-default" id="btn_search" type="button">搜索</button>
+            <div id="bdsug" style="display: none;">
+                <ul>
+                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdfasdf</span></li>
+                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdfsda</span></li>
+                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
+                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
+                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
+                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
+                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
+                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
+                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
+                </ul>
+            </div>
+            <div>
+                <label for="">类别</label>
+                <input type="radio" name="type" id="music" checked>音乐
+                <input type="radio" name="type" id="movie">电影
+                <input type="radio" name="type" id="picture">图片
+            </div>
+        </div>
+    </form>
+
+    <h class="text-primary">本站不存储任何音频文件，数据来自各网站接口，仅供个人学习、研究或者欣赏</h>
+    <br>
+</div>
+<script>
+    var current_type = 'music';
+    $('#btn_search').on('click', function () {
+        console.log(settings_url);
+        // 根据当前类型，内容搜索
+        search()
+    });
+    $('#music').on('click', function () {
+        // 切换到music
+        if (current_type !== 'music') {
+            current_type = 'music';
+            // 搜索music
+            search()
+        }
+        $('#inp_search').attr('placeholder', '歌曲名或专辑名进行搜索')
+    });
+    $('#movie').on('click', function () {
+        // 切换到电影
+        if (current_type !== 'movie') {
+            current_type = 'movie';
+            // 搜索电影
+            search()
+        }
+        $('#inp_search').attr('placeholder', '电影名进行搜索')
+    });
+    $('#picture').on('click', function () {
+        // 切换到picture
+        if (current_type !== 'picture') {
+            // 搜索picture
+            current_type = 'picture';
+            search()
+        }
+        $('#inp_search').attr('placeholder', '关键字进行搜索')
+    });
+    $('#inp_search').on('input', function () {
+        console.log('change');
+        // 关键字改变，根据类型，获取实时关键字
+        search(1)
+    });
+    $('#inp_search').on('focusin', function () {
+        $('#bdsug').css('display', 'block');
+        if ($('#inp_search').val() === "") {
+            // todo 显示本地历史记录
+            // $('[bdsug-store bdsug-overflow]')
+            // window.localStorage.getItem('history')
+            // window.localStorage.setItem('dnblog_user', result.username)
+            console.log(getHistory())
+        } else {
+            // 根据当前关键字的实时信息
+            search(1)
+        }
+    });
+
+    $('#inp_search').on('focusout', function () {
+        $('#bdsug').css('display', 'none')
+    });
+
+
+    function register() {
+
+    }
+
+    function login() {
+
+    }
+
+
+    function search(operation = 0) {
+
+        // 发送消息
+        var data = {
+            type: current_type,
+            operation: operation,
+            keyword:  '你好' //TODO $('#inp_search').val()
+        };
+        $.ajax({
+            type: 'get',
+            contentType: "application/json",
+            dataType: "json",
+            url: settings_url + current_type,
+            data: data,
+            success: function (result, status, xhr) {
+                console.log(result);
+                if (result.code === 200) {
+                    switch (result.operation) {
+                        case 0:
+                            // todo 在搜索框的下拉列表中显示
+                            break;
+                        case 1:
+                            // todo 在下方区域显示信息
+                            switch (result.data.type) {
+                                case 'music':
+
+                                    break;
+                                case 'movie':
+
+                                    break;
+                                case 'picture':
+
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    alert(result.error)
+                }
+            }
+        });
+    }
+
+
+    var current_history_index = 1;
+    var history_max_count = 10;
+
+    function storeHistory(operation) {
+        // 记录历史
+        if (operation === 0 && $('#inp_search').val() !== "") {
+            if (current_history_index > history_max_count) {
+                current_history_index = 1
+            }
+            flag = true;
+            for (let index = 1; index <= history_max_count; index++) {
+                if ($('#inp_search').val() === window.localStorage.getItem('history' + index)) {
+                    flag = false;
+                    break
+                }
+            }
+            if (flag === true) {
+                window.localStorage.setItem('history' + current_history_index, $('#inp_search').val());
+                current_history_index += 1
+            }
+        }
+    }
+
+    function getHistory() {
+        var history = [];
+        for (let index = 1; index <= history_max_count; index++) {
+            item = window.localStorage.getItem('history' + index);
+            // console.log(item)
+            if (item != null) {
+                history.push(item)
+            }
+        }
+        return history
+    }
+
+    function showHistory(history) {
+
+    }
+</script>
 
 </body>
+
 </html>
