@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 
-class MovieInfo(models.Model):
+class MovieInfomation(models.Model):
     name=models.CharField(max_length=500,verbose_name='电影名',null=False)
     director=models.CharField(max_length=100,verbose_name='导演',default='')
     actor=models.CharField(max_length=1000,verbose_name='演员',default='')
@@ -18,11 +18,16 @@ class MovieInfo(models.Model):
     update_time=models.DateTimeField(auto_now=True,verbose_name='更新时间')
     url=models.CharField(max_length=1000,verbose_name='电影资源链接')
 
+    class Meta:
+        db_table='movie_information'
 
 
 
 class MovieKeyword(models.Model):
-    keyword=models.CharField(max_length=500,verbose_name='关键字',unique=True,null=False)
+    keyword=models.CharField(max_length=200,verbose_name='关键字',unique=True,null=False)
     create_time=models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
 
+    movieInfomation=models.ManyToManyField(MovieInfomation)
 
+    class Meta:
+        db_table='movie_keyword'
