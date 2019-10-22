@@ -11,6 +11,15 @@
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/settings.js"></script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul {
+            list-style: none;
+        }
+
         #inp_search {
             width: 200px;
             height: 30px;
@@ -39,6 +48,33 @@
         #bdsug ul li:hover {
             background-color: #f0f0f0;
         }
+
+        #show {
+            border: solid 1px rgba(80, 80, 80, 0.3);
+            width: 400px;
+            height: auto;
+        }
+
+        .item {
+            overflow: auto;
+            margin-bottom: 5px;
+            padding: 5px;
+            border-bottom: solid 1px rgba(80, 80, 80, 0.3);
+        }
+
+        .left {
+            float: left;
+        }
+
+        .right {
+            float: right;
+        }
+
+        #bottom {
+            position: fixed;
+            bottom: 10px;
+            margin: 0 auto;
+        }
     </style>
 
 </head>
@@ -54,28 +90,82 @@
             <button class="btn btn-default" id="btn_search" type="button">搜索</button>
             <div id="bdsug" style="display: none;">
                 <ul>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdfasdf</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdfsda</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
+                    {#   <li data-key="" class="bdsug-store bdsug-overflow"><span>sdfasdf</span></li>#}
                 </ul>
-            </div>
-            <div>
-                <label for="">类别</label>
-                <input type="radio" name="type" id="music" checked>音乐
-                <input type="radio" name="type" id="movie">电影
-                <input type="radio" name="type" id="picture">图片
             </div>
         </div>
     </form>
+    <div>
+        <label for="">类别</label>
+        <input type="radio" name="type" id="music" checked>音乐
+        <input type="radio" name="type" id="movie">电影
+        <input type="radio" name="type" id="picture">图片
+    </div>
+    <div id="show">
+        <div class="item">
+            <div class="left">
+                <a href="">你好</a>
+                <p>
+                    <span>歌手: xxx</span>
+                    <span>时长：xxx</span>
+                    <span>下载:xxx</span>
+                </p>
+            </div>
+            <div class="right">
+                <p>
+                    <span>评星</span>
+                    <img src="/static/image/空星.png">
+                    <img src="/static/image/空星.png">
+                    <img src="/static/image/空星.png">
+                    <img src="/static/image/空星.png">
+                    <img src="/static/image/空星.png">
+                </p>
+                <p>
+                    <span>xx</span>个评分
+                    <button>评分</button>
+                </p>
+            </div>
 
-    <h class="text-primary">本站不存储任何音频文件，数据来自各网站接口，仅供个人学习、研究或者欣赏</h>
-    <br>
+            <div>
+                <ul>
+                    <li>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="item">
+            <div class="left">
+                <a href="">你好</a>
+                <p>
+                    <span>歌手: xxx</span>
+                    <span>时长：xxx</span>
+                    <span>下载:xxx</span>
+                </p>
+            </div>
+            <div class="right">
+                <p>
+                    <span>评星</span>
+                    <img src="/static/image/空星.png">
+                    <img src="/static/image/空星.png">
+                    <img src="/static/image/空星.png">
+                    <img src="/static/image/空星.png">
+                    <img src="/static/image/空星.png">
+                </p>
+                <p>
+                    <span>xx</span>个评分
+                    <button>评分</button>
+                </p>
+            </div>
+
+            <div>
+                <ul>
+                    <li>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+        <p id="bottom">本站不存储任何音频文件，数据来自各网站接口，仅供个人学习、研究或者欣赏</p>
 </div>
 <script>
     var current_type = 'music';
@@ -116,22 +206,22 @@
         // 关键字改变，根据类型，获取实时关键字
         search(1)
     });
+
     $('#inp_search').on('focusin', function () {
+        $('#bdsug').stop(true, true);
         $('#bdsug').css('display', 'block');
         if ($('#inp_search').val() === "") {
-            // todo 显示本地历史记录
-            // $('[bdsug-store bdsug-overflow]')
-            // window.localStorage.getItem('history')
-            // window.localStorage.setItem('dnblog_user', result.username)
-            console.log(getHistory())
+            // 显示历史记录
+            showHistory(getHistory());
         } else {
-            // 根据当前关键字的实时信息
+            // 根据当前关键字的实时关键字信息
             search(1)
         }
     });
 
     $('#inp_search').on('focusout', function () {
-        $('#bdsug').css('display', 'none')
+        $('#bdsug').stop(true, true);
+        $('#bdsug').slideUp(300);
     });
 
 
@@ -143,14 +233,15 @@
 
     }
 
-
+    // 搜索
     function search(operation = 0) {
-
+        // 保存历史记录
+        storeHistory(operation);
         // 发送消息
         var data = {
-            type: current_type,
+            {#type: current_type,#}
             operation: operation,
-            keyword:  '你好' //TODO $('#inp_search').val()
+            keyword: $('#inp_search').val()
         };
         $.ajax({
             type: 'get',
@@ -163,7 +254,7 @@
                 if (result.code === 200) {
                     switch (result.operation) {
                         case 0:
-                            // todo 在搜索框的下拉列表中显示
+                            showHistory(result.data);
                             break;
                         case 1:
                             // todo 在下方区域显示信息
@@ -195,6 +286,7 @@
     var current_history_index = 1;
     var history_max_count = 10;
 
+    // 保存历史
     function storeHistory(operation) {
         // 记录历史
         if (operation === 0 && $('#inp_search').val() !== "") {
@@ -215,6 +307,7 @@
         }
     }
 
+    // 获取本地历史
     function getHistory() {
         var history = [];
         for (let index = 1; index <= history_max_count; index++) {
@@ -227,9 +320,29 @@
         return history
     }
 
+    // 显示历史
     function showHistory(history) {
+        html1 = '';
+        for (let index = 0; index < history.length; index++) {
+            html1 += '<li data-key="" class="bdsug-store bdsug-overflow"><span>' + history[index] + '</span></li>';
+        }
+        $('#bdsug>ul').html(html1);
+        // 对 元素 进行绑定
+        $('#bdsug>ul li').each(function (event) {
+            $(this).on('click', function () {
+                // 显示在框中
+                $('#inp_search').val($(this).children('span').text());
+                // 搜索
+                {#$('#bdsug').css('display', 'block');#}
+            });
+        });
+    }
+
+    function showMusic(musics) {
 
     }
+
+
 </script>
 
 </body>
