@@ -102,30 +102,30 @@
         <input type="radio" name="type" id="picture">图片
     </div>
     <div id="show">
-        <div class="item">
-            <div class="left">
-                <a href="">你好</a>
-                <p>
-                    <span>歌手: xxx</span>
-                    <span>时长：xxx</span>
-                    <span>下载:xxx</span>
-                </p>
-            </div>
-            <div class="right">
-                <p>
-                    <span>评星</span>
-                    <img src="/static/image/空星.png">
-                    <img src="/static/image/空星.png">
-                    <img src="/static/image/空星.png">
-                    <img src="/static/image/空星.png">
-                    <img src="/static/image/空星.png">
-                </p>
-                <p>
-                    <span>xx</span>个评分
-                    <button>评分</button>
-                </p>
-            </div>
-        </div>
+{#        <div class="item">#}
+{#            <div class="left">#}
+{#                <a href="">你好</a>#}
+{#                <p>#}
+{#                    <span>歌手: xxx</span>#}
+{#                    <span>时长：xxx</span>#}
+{#                    <span>下载:xxx</span>#}
+{#                </p>#}
+{#            </div>#}
+{#            <div class="right">#}
+{#                <p>#}
+{#                    <span>评星</span>#}
+{#                    <img src="/static/image/空星.png">#}
+{#                    <img src="/static/image/空星.png">#}
+{#                    <img src="/static/image/空星.png">#}
+{#                    <img src="/static/image/空星.png">#}
+{#                    <img src="/static/image/空星.png">#}
+{#                </p>#}
+{#                <p>#}
+{#                    <span>xx</span>个评分#}
+{#                    <button>评分</button>#}
+{#                </p>#}
+{#            </div>#}
+{#        </div>#}
     </div>
     <p id="bottom">本站不存储任何音频文件，数据来自各网站接口，仅供个人学习、研究或者欣赏</p>
 </div>
@@ -197,11 +197,16 @@
     function search() {
         // 保存历史记录
         storeHistory();
+        val = $('#inp_search').val();
+        operation = 1;
+        if (val == null || val === '') {
+            operation = 2
+        }
         // 发送消息
         var data = {
             {#type: current_type,#}
-            operation: 1,
-            keyword: $('#inp_search').val()
+            operation: operation,
+            keyword: val,
         };
         $.ajax({
             type: 'get',
@@ -214,13 +219,13 @@
                 if (result.code === 200) {
                     switch (result.data.type) {
                         case 'music':
-                            showMusic(result.data.Content);
+                            showMusic(result.data);
                             break;
                         case 'movie':
-                            showMovie(result.data.Content);
+                            showMovie(result.data);
                             break;
                         case 'picture':
-                            showPicture(result.data.Content);
+                            showPicture(result.data);
                             break;
                         default:
                             break;
@@ -279,8 +284,8 @@
 
     // 获取本地历史
     function getHistory() {
-        token = window.localStorage.getItem('dnblog_token');
-        username = window.localStorage.getItem('dnblog_user');
+        var token = window.localStorage.getItem('superUrl_token');
+        var username = window.localStorage.getItem('superUrl_user');
         if (token == null) {
             // 本地获取
             var history = [];
@@ -320,7 +325,7 @@
 
     // 显示内容
     function showContent(content) {
-        html1 = '';
+        var html1 = '';
         for (let index = 0; index < content.length; index++) {
             html1 += '<li data-key="" class="bdsug-store bdsug-overflow"><span>' + content[index] + '</span></li>';
         }
@@ -336,16 +341,75 @@
         });
     }
 
-
+    // 显示音乐
     function showMusic(musics) {
-
+        var html = '';
+        for (let index = 0; index < musics.length; index++) {
+            html += '<div class="item">';
+            html += '<div class="left">';
+            html += '<a href="' + musics['url'] + '">' + musics['name'] + '</a>';
+            html += '<p>';
+            html += '<span> 歌手:  ' + musics['star'] + ' < /span>';
+            html += '<span> 下载: ' + musics['downloads_count'] + ' < /span> ';
+            html += '</p>';
+            html += '</div>';
+            html += '<div class="right">';
+            html += '<p>';
+            html += '<span>评星</span>';
+            var level = Math.ceil(musics['level']);
+            for (let j = 0; j < 5; j++) {
+                if (j < level) {
+                    html += '<img src="/static/image/空星.png">';
+                } else {
+                    html += '<img src="/static/image/亮星.png">';
+                }
+            }
+            html += '</p>';
+            html += '<p>';
+            html += '<span>' + musics['commit_count'] + '</span>个评分';
+            html += '<button>评分</button>';
+            html += '</p>';
+            html += '</div>';
+            html += '</div>';
+        }
+        $('#show').html(html)
     }
 
     function showMovie(movies) {
-
+        var html = '';
+        for (let index = 0; index < movies.length; index++) {
+            html += '<div class="item">';
+            html += '<div class="left">';
+            html += '<a href="' + movies['url'] + '">' + movies['name'] + '</a>';
+            html += '<p>';
+            html += '<span> 主演:  ' + movies['star'] + ' < /span>';
+            html += '<span> 导演:  ' + movies['director'] + ' < /span>';
+            html += '<span> 下载: ' + movies['downloads_count'] + ' < /span> ';
+            html += '</p>';
+            html += '</div>';
+            html += '<div class="right">';
+            html += '<p>';
+            html += '<span>评星</span>';
+            var level = Math.ceil(movies['level']);
+            for (let j = 0; j < 5; j++) {
+                if (j < level) {
+                    html += '<img src="/static/image/空星.png">';
+                } else {
+                    html += '<img src="/static/image/亮星.png">';
+                }
+            }
+            html += '</p>';
+            html += '<p>';
+            html += '<span>' + movies['commit_count'] + '</span>个评分';
+            html += '<button>评分</button>';
+            html += '</p>';
+            html += '</div>';
+            html += '</div>';
+        }
+        $('#show').html(html)
     }
 
-    function showPicture(pivtures) {
+    function showPicture(pictures) {
 
     }
 
