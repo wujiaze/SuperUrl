@@ -81,8 +81,8 @@
 
 <body style="background-color:#f0f0f0;">
 <div class="container">
-    <button class="btn btn-default" id="btn_login" type="button">登陆</button>
-    <button class="btn btn-default" id="btn_register" type="button">注册</button>
+
+
     <form class="form-horizontal" method="get" id="search" role="form">
         <div class="input-group">
             <input type="text" name="kw" id="inp_search" placeholder="歌曲名或专辑名进行搜索" class="form-control" value=""
@@ -134,14 +134,18 @@
     $('#btn_search').on('click', function () {
         // 根据当前类型，内容搜索
         var inp = $('#inp_search').val();
-        if (inp != null && inp !== '')
-            search()
+        if (inp != null && inp !== '') {
+            search();
+            // 保存历史记录
+            storeHistory();
+        }
     });
     $('#music').on('click', function () {
         // 切换到music
         if (current_type !== 'music') {
             current_type = 'music';
             search();
+            storeHistory();
         }
         $('#inp_search').attr('placeholder', '歌曲名或专辑名进行搜索')
     });
@@ -151,6 +155,7 @@
             current_type = 'movie';
             // 搜索电影
             search();
+            storeHistory();
         }
         $('#inp_search').attr('placeholder', '电影名进行搜索')
     });
@@ -160,6 +165,7 @@
             // 搜索picture
             current_type = 'picture';
             search();
+            storeHistory();
         }
         $('#inp_search').attr('placeholder', '关键字进行搜索')
     });
@@ -170,15 +176,14 @@
     });
 
     $('#inp_search').on('focusin', function () {
-        $('#bdsug').stop(true, true).css('display', 'block');
         if ($('#inp_search').val() === "") {
             // 显示历史记录
             getHistory();
         } else {
             // 根据当前关键字的实时关键字信息
             search_keyword();
-
         }
+        $('#bdsug').stop(true, true).css('display', 'block');
     });
 
     $('#inp_search').on('focusout', function () {
@@ -186,18 +191,9 @@
     });
 
 
-    function register() {
-
-    }
-
-    function login() {
-
-    }
 
     // 搜索具体内容
     function search() {
-        // 保存历史记录
-        storeHistory();
         var inp = $('#inp_search').val();
         // 发送消息
         var data = {
@@ -238,7 +234,7 @@
 
     // 根据输入值，获取关键字列表
     function search_keyword() {
-        var inp = $('#inp_search').val()
+        var inp = $('#inp_search').val();
         if (inp == null || inp === '') {
             return
         }
@@ -283,7 +279,7 @@
         }
     }
 
-    // 获取本地历史
+    // 获取历史
     function getHistory() {
         var token = window.localStorage.getItem('superUrl_token');
         var username = window.localStorage.getItem('superUrl_user');
@@ -294,7 +290,11 @@
                 item = window.localStorage.getItem('history' + index);
                 // console.log(item)
                 if (item != null) {
-                    history.push(item)
+                    if (current_history_index - 1 >= index) {
+                        history[current_history_index - 1 - index] = item
+                    } else {
+                        history[current_history_index - 1 - index + history_max_count] = item
+                    }
                 }
             }
             showContent(history);
@@ -374,8 +374,11 @@
             html += '</div>';
         }
         $('#show').html(html)
+        // todo 绑定事件  点击下载  点击评分
     }
 
+
+    // 显示电影
     function showMovie(movies) {
         var html = '';
         for (let index = 0; index < movies.length; index++) {
@@ -410,6 +413,7 @@
         $('#show').html(html)
     }
 
+    // 显示图片
     function showPicture(pictures) {
 
     }
