@@ -125,47 +125,9 @@
                     <button>评分</button>
                 </p>
             </div>
-
-            <div>
-                <ul>
-                    <li>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="item">
-            <div class="left">
-                <a href="">你好</a>
-                <p>
-                    <span>歌手: xxx</span>
-                    <span>时长：xxx</span>
-                    <span>下载:xxx</span>
-                </p>
-            </div>
-            <div class="right">
-                <p>
-                    <span>评星</span>
-                    <img src="/static/image/空星.png">
-                    <img src="/static/image/空星.png">
-                    <img src="/static/image/空星.png">
-                    <img src="/static/image/空星.png">
-                    <img src="/static/image/空星.png">
-                </p>
-                <p>
-                    <span>xx</span>个评分
-                    <button>评分</button>
-                </p>
-            </div>
-
-            <div>
-                <ul>
-                    <li>
-                    </li>
-                </ul>
-            </div>
         </div>
     </div>
-        <p id="bottom">本站不存储任何音频文件，数据来自各网站接口，仅供个人学习、研究或者欣赏</p>
+    <p id="bottom">本站不存储任何音频文件，数据来自各网站接口，仅供个人学习、研究或者欣赏</p>
 </div>
 <script>
     var current_type = 'music';
@@ -204,24 +166,22 @@
     $('#inp_search').on('input', function () {
         console.log('change');
         // 关键字改变，根据类型，获取实时关键字
-        search(1)
+        showContent(search_keyword());
     });
 
     $('#inp_search').on('focusin', function () {
-        $('#bdsug').stop(true, true);
-        $('#bdsug').css('display', 'block');
+        $('#bdsug').stop(true, true).css('display', 'block');
         if ($('#inp_search').val() === "") {
             // 显示历史记录
-            showHistory(getHistory());
+            showContent(getHistory());
         } else {
             // 根据当前关键字的实时关键字信息
-            search(1)
+            showContent(search_keyword());
         }
     });
 
     $('#inp_search').on('focusout', function () {
-        $('#bdsug').stop(true, true);
-        $('#bdsug').slideUp(300);
+        $('#bdsug').stop(true, true).slideUp(300);
     });
 
 
@@ -233,14 +193,14 @@
 
     }
 
-    // 搜索
-    function search(operation = 0) {
+    // 搜索具体内容
+    function search() {
         // 保存历史记录
-        storeHistory(operation);
+        storeHistory();
         // 发送消息
         var data = {
             {#type: current_type,#}
-            operation: operation,
+            operation: 1,
             keyword: $('#inp_search').val()
         };
         $.ajax({
@@ -252,25 +212,15 @@
             success: function (result, status, xhr) {
                 console.log(result);
                 if (result.code === 200) {
-                    switch (result.operation) {
-                        case 0:
-                            showHistory(result.data);
+                    switch (result.data.type) {
+                        case 'music':
+                            showMusic(result.data.Content);
                             break;
-                        case 1:
-                            // todo 在下方区域显示信息
-                            switch (result.data.type) {
-                                case 'music':
-
-                                    break;
-                                case 'movie':
-
-                                    break;
-                                case 'picture':
-
-                                    break;
-                                default:
-                                    break;
-                            }
+                        case 'movie':
+                            showMovie(result.data.Content);
+                            break;
+                        case 'picture':
+                            showPicture(result.data.Content);
                             break;
                         default:
                             break;
@@ -282,14 +232,34 @@
         });
     }
 
+    // 根据输入值，获取关键字列表
+    function search_keyword() {
+        var data = {
+            {#type: current_type,#}
+            operation: 0,
+            keyword: $('#inp_search').val()
+        };
+        $.ajax({
+            type: 'get',
+            contentType: "application/json",
+            dataType: "json",
+            url: settings_url + current_type,
+            data: data,
+            success: function (result) {
+                if (result.code === 200) {
+                    return result.data
+                }
+            }
+        });
+    }
+
 
     var current_history_index = 1;
     var history_max_count = 10;
 
-    // 保存历史
-    function storeHistory(operation) {
-        // 记录历史
-        if (operation === 0 && $('#inp_search').val() !== "") {
+    // 保存本地历史
+    function storeHistory() {
+        if ($('#inp_search').val() !== "") {
             if (current_history_index > history_max_count) {
                 current_history_index = 1
             }
@@ -309,22 +279,50 @@
 
     // 获取本地历史
     function getHistory() {
-        var history = [];
-        for (let index = 1; index <= history_max_count; index++) {
-            item = window.localStorage.getItem('history' + index);
-            // console.log(item)
-            if (item != null) {
-                history.push(item)
+        token = window.localStorage.getItem('dnblog_token');
+        username = window.localStorage.getItem('dnblog_user');
+        if (token == null) {
+            // 本地获取
+            var history = [];
+            for (let index = 1; index <= history_max_count; index++) {
+                item = window.localStorage.getItem('history' + index);
+                // console.log(item)
+                if (item != null) {
+                    history.push(item)
+                }
             }
+            return history
+        } else {
+            // 网络获取
+            data = {
+                username: username
+            };
+            $.ajax({
+                type: 'get',
+                contentType: "application/json",
+                dataType: "json",
+                url: settings_url + 'history',
+                data: data,
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", token);
+                },
+                success: function (request) {
+                    if (request.code === 200) {
+                        console.log(request.data);
+                        return request.data
+                    } else {
+                        alert(request.error)
+                    }
+                }
+            });
         }
-        return history
     }
 
-    // 显示历史
-    function showHistory(history) {
+    // 显示内容
+    function showContent(content) {
         html1 = '';
-        for (let index = 0; index < history.length; index++) {
-            html1 += '<li data-key="" class="bdsug-store bdsug-overflow"><span>' + history[index] + '</span></li>';
+        for (let index = 0; index < content.length; index++) {
+            html1 += '<li data-key="" class="bdsug-store bdsug-overflow"><span>' + content[index] + '</span></li>';
         }
         $('#bdsug>ul').html(html1);
         // 对 元素 进行绑定
@@ -333,15 +331,23 @@
                 // 显示在框中
                 $('#inp_search').val($(this).children('span').text());
                 // 搜索
-                {#$('#bdsug').css('display', 'block');#}
+                search()
             });
         });
     }
+
 
     function showMusic(musics) {
 
     }
 
+    function showMovie(movies) {
+
+    }
+
+    function showPicture(pivtures) {
+
+    }
 
 </script>
 
