@@ -19,9 +19,7 @@ def search_music(request):
 
 
 
-
-
-        return JsonResponse({'code':200})
+            return JsonResponse({'code':200})
 
 
 
