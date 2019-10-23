@@ -11,6 +11,15 @@
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/settings.js"></script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul {
+            list-style: none;
+        }
+
         #inp_search {
             width: 200px;
             height: 30px;
@@ -39,6 +48,33 @@
         #bdsug ul li:hover {
             background-color: #f0f0f0;
         }
+
+        #show {
+            border: solid 1px rgba(80, 80, 80, 0.3);
+            width: 400px;
+            height: auto;
+        }
+
+        .item {
+            overflow: auto;
+            margin-bottom: 5px;
+            padding: 5px;
+            border-bottom: solid 1px rgba(80, 80, 80, 0.3);
+        }
+
+        .left {
+            float: left;
+        }
+
+        .right {
+            float: right;
+        }
+
+        #bottom {
+            position: fixed;
+            bottom: 10px;
+            margin: 0 auto;
+        }
     </style>
 
 </head>
@@ -54,28 +90,44 @@
             <button class="btn btn-default" id="btn_search" type="button">搜索</button>
             <div id="bdsug" style="display: none;">
                 <ul>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdfasdf</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdfsda</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
-                    <li data-key="" class="bdsug-store bdsug-overflow"><span>sdafasd</span></li>
+                    {#   <li data-key="" class="bdsug-store bdsug-overflow"><span>sdfasdf</span></li>#}
                 </ul>
-            </div>
-            <div>
-                <label for="">类别</label>
-                <input type="radio" name="type" id="music" checked>音乐
-                <input type="radio" name="type" id="movie">电影
-                <input type="radio" name="type" id="picture">图片
             </div>
         </div>
     </form>
-
-    <h class="text-primary">本站不存储任何音频文件，数据来自各网站接口，仅供个人学习、研究或者欣赏</h>
-    <br>
+    <div>
+        <label for="">类别</label>
+        <input type="radio" name="type" id="music" checked>音乐
+        <input type="radio" name="type" id="movie">电影
+        <input type="radio" name="type" id="picture">图片
+    </div>
+    <div id="show">
+        <div class="item">
+            <div class="left">
+                <a href="">你好</a>
+                <p>
+                    <span>歌手: xxx</span>
+                    <span>时长：xxx</span>
+                    <span>下载:xxx</span>
+                </p>
+            </div>
+            <div class="right">
+                <p>
+                    <span>评星</span>
+                    <img src="/static/image/空星.png">
+                    <img src="/static/image/空星.png">
+                    <img src="/static/image/空星.png">
+                    <img src="/static/image/空星.png">
+                    <img src="/static/image/空星.png">
+                </p>
+                <p>
+                    <span>xx</span>个评分
+                    <button>评分</button>
+                </p>
+            </div>
+        </div>
+    </div>
+    <p id="bottom">本站不存储任何音频文件，数据来自各网站接口，仅供个人学习、研究或者欣赏</p>
 </div>
 <script>
     var current_type = 'music';
@@ -114,24 +166,22 @@
     $('#inp_search').on('input', function () {
         console.log('change');
         // 关键字改变，根据类型，获取实时关键字
-        search(1)
+        showContent(search_keyword());
     });
+
     $('#inp_search').on('focusin', function () {
-        $('#bdsug').css('display', 'block');
+        $('#bdsug').stop(true, true).css('display', 'block');
         if ($('#inp_search').val() === "") {
-            // todo 显示本地历史记录
-            // $('[bdsug-store bdsug-overflow]')
-            // window.localStorage.getItem('history')
-            // window.localStorage.setItem('dnblog_user', result.username)
-            console.log(getHistory())
+            // 显示历史记录
+            showContent(getHistory());
         } else {
-            // 根据当前关键字的实时信息
-            search(1)
+            // 根据当前关键字的实时关键字信息
+            showContent(search_keyword());
         }
     });
 
     $('#inp_search').on('focusout', function () {
-        $('#bdsug').css('display', 'none')
+        $('#bdsug').stop(true, true).slideUp(300);
     });
 
 
@@ -143,14 +193,15 @@
 
     }
 
-
-    function search(operation = 0) {
-
+    // 搜索具体内容
+    function search() {
+        // 保存历史记录
+        storeHistory();
         // 发送消息
         var data = {
-            type: current_type,
-            operation: operation,
-            keyword:  '你好' //TODO $('#inp_search').val()
+            {#type: current_type,#}
+            operation: 1,
+            keyword: $('#inp_search').val()
         };
         $.ajax({
             type: 'get',
@@ -161,25 +212,15 @@
             success: function (result, status, xhr) {
                 console.log(result);
                 if (result.code === 200) {
-                    switch (result.operation) {
-                        case 0:
-                            // todo 在搜索框的下拉列表中显示
+                    switch (result.data.type) {
+                        case 'music':
+                            showMusic(result.data.Content);
                             break;
-                        case 1:
-                            // todo 在下方区域显示信息
-                            switch (result.data.type) {
-                                case 'music':
-
-                                    break;
-                                case 'movie':
-
-                                    break;
-                                case 'picture':
-
-                                    break;
-                                default:
-                                    break;
-                            }
+                        case 'movie':
+                            showMovie(result.data.Content);
+                            break;
+                        case 'picture':
+                            showPicture(result.data.Content);
                             break;
                         default:
                             break;
@@ -191,13 +232,34 @@
         });
     }
 
+    // 根据输入值，获取关键字列表
+    function search_keyword() {
+        var data = {
+            {#type: current_type,#}
+            operation: 0,
+            keyword: $('#inp_search').val()
+        };
+        $.ajax({
+            type: 'get',
+            contentType: "application/json",
+            dataType: "json",
+            url: settings_url + current_type,
+            data: data,
+            success: function (result) {
+                if (result.code === 200) {
+                    return result.data
+                }
+            }
+        });
+    }
+
 
     var current_history_index = 1;
     var history_max_count = 10;
 
-    function storeHistory(operation) {
-        // 记录历史
-        if (operation === 0 && $('#inp_search').val() !== "") {
+    // 保存本地历史
+    function storeHistory() {
+        if ($('#inp_search').val() !== "") {
             if (current_history_index > history_max_count) {
                 current_history_index = 1
             }
@@ -215,21 +277,78 @@
         }
     }
 
+    // 获取本地历史
     function getHistory() {
-        var history = [];
-        for (let index = 1; index <= history_max_count; index++) {
-            item = window.localStorage.getItem('history' + index);
-            // console.log(item)
-            if (item != null) {
-                history.push(item)
+        token = window.localStorage.getItem('dnblog_token');
+        username = window.localStorage.getItem('dnblog_user');
+        if (token == null) {
+            // 本地获取
+            var history = [];
+            for (let index = 1; index <= history_max_count; index++) {
+                item = window.localStorage.getItem('history' + index);
+                // console.log(item)
+                if (item != null) {
+                    history.push(item)
+                }
             }
+            return history
+        } else {
+            // 网络获取
+            data = {
+                username: username
+            };
+            $.ajax({
+                type: 'get',
+                contentType: "application/json",
+                dataType: "json",
+                url: settings_url + 'history',
+                data: data,
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", token);
+                },
+                success: function (request) {
+                    if (request.code === 200) {
+                        console.log(request.data);
+                        return request.data
+                    } else {
+                        alert(request.error)
+                    }
+                }
+            });
         }
-        return history
     }
 
-    function showHistory(history) {
+    // 显示内容
+    function showContent(content) {
+        html1 = '';
+        for (let index = 0; index < content.length; index++) {
+            html1 += '<li data-key="" class="bdsug-store bdsug-overflow"><span>' + content[index] + '</span></li>';
+        }
+        $('#bdsug>ul').html(html1);
+        // 对 元素 进行绑定
+        $('#bdsug>ul li').each(function (event) {
+            $(this).on('click', function () {
+                // 显示在框中
+                $('#inp_search').val($(this).children('span').text());
+                // 搜索
+                search()
+            });
+        });
+    }
+
+
+    function showMusic(musics) {
 
     }
+
+    function showMovie(movies) {
+
+    }
+
+    function showPicture(pivtures) {
+
+    }
+
 </script>
 
 </body>
