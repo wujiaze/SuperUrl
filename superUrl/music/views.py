@@ -22,16 +22,16 @@ def search_music(request):
                 data_list = r.lrange(keyword,0,-1)
                 for data in data_list:
                     data = data.decode()
-                    name = data.split(',')[]
-                    download = data.split(',')[]
-                    name = data.split(',')[]
-                    name = data.split(',')[]
-                    name = data.split(',')[]
-                    name = data.split(',')[]
-                    name = data.split(',')[]
-                    name = data.split(',')[]
-                    name = data.split(',')[]
-                    name = data.split(',')[]
+                    # name = data.split(',')[]
+                    # download = data.split(',')[]
+                    # name = data.split(',')[]
+                    # name = data.split(',')[]
+                    # name = data.split(',')[]
+                    # name = data.split(',')[]
+                    # name = data.split(',')[]
+                    # name = data.split(',')[]
+                    # name = data.split(',')[]
+                    # name = data.split(',')[]
 
             elif res ==0:
                 #todo 爬虫接口
