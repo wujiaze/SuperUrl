@@ -6,7 +6,7 @@ class MovieInfomation(models.Model):
     name=models.CharField(max_length=500,verbose_name='电影名',null=False)
     director=models.CharField(max_length=100,verbose_name='导演',default='')
     actor=models.CharField(max_length=1000,verbose_name='演员',default='')
-    releasetime=models.DateTimeField(default='')
+    releasetime=models.CharField(max_length=500,default='',verbose_name='上映时间')
     download_count=models.IntegerField(default=0,verbose_name='下载量')
     star_one=models.IntegerField(default=0,verbose_name='一星数')
     star_two = models.IntegerField(default=0, verbose_name='二星数')

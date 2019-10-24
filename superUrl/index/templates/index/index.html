@@ -81,8 +81,8 @@
 
 <body style="background-color:#f0f0f0;">
 <div class="container">
-    <button class="btn btn-default" id="btn_login" type="button">登陆</button>
-    <button class="btn btn-default" id="btn_register" type="button">注册</button>
+
+
     <form class="form-horizontal" method="get" id="search" role="form">
         <div class="input-group">
             <input type="text" name="kw" id="inp_search" placeholder="歌曲名或专辑名进行搜索" class="form-control" value=""
@@ -102,46 +102,50 @@
         <input type="radio" name="type" id="picture">图片
     </div>
     <div id="show">
-        <div class="item">
-            <div class="left">
-                <a href="">你好</a>
-                <p>
-                    <span>歌手: xxx</span>
-                    <span>时长：xxx</span>
-                    <span>下载:xxx</span>
-                </p>
-            </div>
-            <div class="right">
-                <p>
-                    <span>评星</span>
-                    <img src="/static/image/空星.png">
-                    <img src="/static/image/空星.png">
-                    <img src="/static/image/空星.png">
-                    <img src="/static/image/空星.png">
-                    <img src="/static/image/空星.png">
-                </p>
-                <p>
-                    <span>xx</span>个评分
-                    <button>评分</button>
-                </p>
-            </div>
-        </div>
+        {#        <div class="item">#}
+        {#            <div class="left">#}
+        {#                <a href="">你好</a>#}
+        {#                <p>#}
+        {#                    <span>歌手: xxx</span>#}
+        {#                    <span>时长：xxx</span>#}
+        {#                    <span>下载:xxx</span>#}
+        {#                </p>#}
+        {#            </div>#}
+        {#            <div class="right">#}
+        {#                <p>#}
+        {#                    <span>评星</span>#}
+        {#                    <img src="/static/image/空星.png">#}
+        {#                    <img src="/static/image/空星.png">#}
+        {#                    <img src="/static/image/空星.png">#}
+        {#                    <img src="/static/image/空星.png">#}
+        {#                    <img src="/static/image/空星.png">#}
+        {#                </p>#}
+        {#                <p>#}
+        {#                    <span>xx</span>个评分#}
+        {#                    <button>评分</button>#}
+        {#                </p>#}
+        {#            </div>#}
+        {#        </div>#}
     </div>
     <p id="bottom">本站不存储任何音频文件，数据来自各网站接口，仅供个人学习、研究或者欣赏</p>
 </div>
 <script>
     var current_type = 'music';
     $('#btn_search').on('click', function () {
-        console.log(settings_url);
         // 根据当前类型，内容搜索
-        search()
+        var inp = $('#inp_search').val();
+        if (inp != null && inp !== '') {
+            search();
+            // 保存历史记录
+            storeHistory();
+        }
     });
     $('#music').on('click', function () {
         // 切换到music
         if (current_type !== 'music') {
             current_type = 'music';
-            // 搜索music
-            search()
+            search();
+            storeHistory();
         }
         $('#inp_search').attr('placeholder', '歌曲名或专辑名进行搜索')
     });
@@ -150,7 +154,8 @@
         if (current_type !== 'movie') {
             current_type = 'movie';
             // 搜索电影
-            search()
+            search();
+            storeHistory();
         }
         $('#inp_search').attr('placeholder', '电影名进行搜索')
     });
@@ -159,25 +164,26 @@
         if (current_type !== 'picture') {
             // 搜索picture
             current_type = 'picture';
-            search()
+            search();
+            storeHistory();
         }
         $('#inp_search').attr('placeholder', '关键字进行搜索')
     });
+
     $('#inp_search').on('input', function () {
-        console.log('change');
         // 关键字改变，根据类型，获取实时关键字
-        showContent(search_keyword());
+        search_keyword()
     });
 
     $('#inp_search').on('focusin', function () {
-        $('#bdsug').stop(true, true).css('display', 'block');
         if ($('#inp_search').val() === "") {
             // 显示历史记录
-            showContent(getHistory());
+            getHistory();
         } else {
             // 根据当前关键字的实时关键字信息
-            showContent(search_keyword());
+            search_keyword();
         }
+        $('#bdsug').stop(true, true).css('display', 'block');
     });
 
     $('#inp_search').on('focusout', function () {
@@ -185,42 +191,36 @@
     });
 
 
-    function register() {
-
-    }
-
-    function login() {
-
-    }
 
     // 搜索具体内容
     function search() {
-        // 保存历史记录
-        storeHistory();
+        var inp = $('#inp_search').val();
         // 发送消息
         var data = {
-            {#type: current_type,#}
-            operation: 1,
-            keyword: $('#inp_search').val()
+            keyword: inp,
         };
+        var url = settings_url + current_type;
+        if (inp == null || inp === "") {
+            url += "/rank"
+        }
         $.ajax({
             type: 'get',
             contentType: "application/json",
             dataType: "json",
-            url: settings_url + current_type,
+            url: url,
             data: data,
             success: function (result, status, xhr) {
                 console.log(result);
                 if (result.code === 200) {
                     switch (result.data.type) {
                         case 'music':
-                            showMusic(result.data.Content);
+                            showMusic(result.data);
                             break;
                         case 'movie':
-                            showMovie(result.data.Content);
+                            showMovie(result.data);
                             break;
                         case 'picture':
-                            showPicture(result.data.Content);
+                            showPicture(result.data);
                             break;
                         default:
                             break;
@@ -234,20 +234,22 @@
 
     // 根据输入值，获取关键字列表
     function search_keyword() {
+        var inp = $('#inp_search').val();
+        if (inp == null || inp === '') {
+            return
+        }
         var data = {
-            {#type: current_type,#}
-            operation: 0,
-            keyword: $('#inp_search').val()
+            keyword: inp
         };
         $.ajax({
             type: 'get',
             contentType: "application/json",
             dataType: "json",
-            url: settings_url + current_type,
+            url: settings_url + current_type + '/' + 'keylist',
             data: data,
             success: function (result) {
                 if (result.code === 200) {
-                    return result.data
+                    showContent(result.data)
                 }
             }
         });
@@ -277,10 +279,10 @@
         }
     }
 
-    // 获取本地历史
+    // 获取历史
     function getHistory() {
-        token = window.localStorage.getItem('dnblog_token');
-        username = window.localStorage.getItem('dnblog_user');
+        var token = window.localStorage.getItem('superUrl_token');
+        var username = window.localStorage.getItem('superUrl_user');
         if (token == null) {
             // 本地获取
             var history = [];
@@ -288,10 +290,14 @@
                 item = window.localStorage.getItem('history' + index);
                 // console.log(item)
                 if (item != null) {
-                    history.push(item)
+                    if (current_history_index - 1 >= index) {
+                        history[current_history_index - 1 - index] = item
+                    } else {
+                        history[current_history_index - 1 - index + history_max_count] = item
+                    }
                 }
             }
-            return history
+            showContent(history);
         } else {
             // 网络获取
             data = {
@@ -309,7 +315,7 @@
                 success: function (request) {
                     if (request.code === 200) {
                         console.log(request.data);
-                        return request.data
+                        showContent(request.data);
                     } else {
                         alert(request.error)
                     }
@@ -320,7 +326,7 @@
 
     // 显示内容
     function showContent(content) {
-        html1 = '';
+        var html1 = '';
         for (let index = 0; index < content.length; index++) {
             html1 += '<li data-key="" class="bdsug-store bdsug-overflow"><span>' + content[index] + '</span></li>';
         }
@@ -336,16 +342,79 @@
         });
     }
 
-
+    // 显示音乐
     function showMusic(musics) {
-
+        var html = '';
+        for (let index = 0; index < musics.length; index++) {
+            html += '<div class="item">';
+            html += '<div class="left">';
+            html += '<a href="' + musics['url'] + '">' + musics['name'] + '</a>';
+            html += '<p>';
+            html += '<span> 歌手:  ' + musics['star'] + ' < /span>';
+            html += '<span> 下载: ' + musics['downloads_count'] + ' < /span> ';
+            html += '</p>';
+            html += '</div>';
+            html += '<div class="right">';
+            html += '<p>';
+            html += '<span>评星</span>';
+            var level = Math.ceil(musics['level']);
+            for (let j = 0; j < 5; j++) {
+                if (j < level) {
+                    html += '<img src="/static/image/空星.png">';
+                } else {
+                    html += '<img src="/static/image/亮星.png">';
+                }
+            }
+            html += '</p>';
+            html += '<p>';
+            html += '<span>' + musics['commit_count'] + '</span>个评分';
+            html += '<button>评分</button>';
+            html += '</p>';
+            html += '</div>';
+            html += '</div>';
+        }
+        $('#show').html(html)
+        // todo 绑定事件  点击下载  点击评分
     }
 
+
+    // 显示电影
     function showMovie(movies) {
-
+        var html = '';
+        for (let index = 0; index < movies.length; index++) {
+            html += '<div class="item">';
+            html += '<div class="left">';
+            html += '<a href="' + movies['url'] + '">' + movies['name'] + '</a>';
+            html += '<p>';
+            html += '<span> 主演:  ' + movies['star'] + ' < /span>';
+            html += '<span> 导演:  ' + movies['director'] + ' < /span>';
+            html += '<span> 下载: ' + movies['downloads_count'] + ' < /span> ';
+            html += '</p>';
+            html += '</div>';
+            html += '<div class="right">';
+            html += '<p>';
+            html += '<span>评星</span>';
+            var level = Math.ceil(movies['level']);
+            for (let j = 0; j < 5; j++) {
+                if (j < level) {
+                    html += '<img src="/static/image/空星.png">';
+                } else {
+                    html += '<img src="/static/image/亮星.png">';
+                }
+            }
+            html += '</p>';
+            html += '<p>';
+            html += '<span>' + movies['commit_count'] + '</span>个评分';
+            html += '<button>评分</button>';
+            html += '</p>';
+            html += '</div>';
+            html += '</div>';
+        }
+        $('#show').html(html)
     }
 
-    function showPicture(pivtures) {
+    // 显示图片
+    function showPicture(pictures) {
 
     }
 
