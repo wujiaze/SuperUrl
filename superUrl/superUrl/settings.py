@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'movie',
     'music',
     'picture',
-    'btoken'
+    'btoken',
+    'history',
+    'comment'
 ]
 
 MIDDLEWARE = [
