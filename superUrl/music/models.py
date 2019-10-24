@@ -23,7 +23,7 @@ class MusicInformation(models.Model):
 
 
 class MusicKeyword(models.Model):
-    key_word = models.CharField(max_length=50,null=False,unique=True,verbose_name='关键字')
+    keyword = models.CharField(max_length=50,null=False,unique=True,verbose_name='关键字')
     create_time = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
 
     musicinformation = models.ManyToManyField(MusicInformation)
