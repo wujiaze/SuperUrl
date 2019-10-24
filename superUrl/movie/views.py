@@ -114,7 +114,6 @@ def movie(request):
 
 
 
-
     else:
         result={'code':40000,'error':'pls GET request'}
         return JsonResponse(result)
