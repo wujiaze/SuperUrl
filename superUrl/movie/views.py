@@ -118,8 +118,9 @@ def movie(request):
         result={'code':40000,'error':'pls GET request'}
         return JsonResponse(result)
 
-
-
+#爬虫返回数据（没点搜索）
+def get_keylist():
+    pass
 
 
 
