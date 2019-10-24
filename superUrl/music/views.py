@@ -8,6 +8,11 @@ from music.models import MusicInformation,MusicKeyword
 
 def search_music(request):
     if request.method == 'GET':
+        # todo 步骤1 查询redis
+        # todo 步骤2 查询mysql 更新redis
+        # todo 步骤3 交给爬虫 结束
+
+
         print('进入get')
         keyword = request.GET.get('keyword')
         print(keyword)
@@ -79,9 +84,9 @@ def search_music(request):
                     redis_list.append(res)
                 r.lpush(keyword,redis_list)
 
-                #res = r.lrange(keyword,0,-1)  ->  [b"['aaaa', 'bbbbbb', 'cccccccc']"]
-                #type(res)  -> list
-                #res[0].decode()   ->    str
+                #取出来的值的格式(result) -> r.lrange(keyword,0,-1)  ->  [b"['aaaa', 'bbbbbb', 'cccccccc']"]
+                #type(result)  -> list
+                #resutl[0].decode()   ->    str
 
                 result = {
                     'code': 200,
@@ -93,22 +98,27 @@ def search_music(request):
 
 
             except Exception as e:
-                pass
+
             #todo 爬虫接口
             #  得到　　data
 
-                data = {}
+                data = [{'name':'aaa1','url':'xxx1'},
+                        {'name':'aaa2','url':'xxx2'},
+                        {'name':'aaa3','url':'xxx3'}]
+                print('no redis , no mysql')
+                print(keyword)
                 try:
+                    print('create keyword')
                     kw = MusicKeyword.objects.create(keyword=keyword)
                 except Exception as e:
                     print('已经存在关键字')
                     return JsonResponse({'code':20000,'error':'稍后访问'})
                 for i in data:
                     try:
-                        movie = MusicInformation.objects.create(name=i['name'],url=i['url'])
+                        music = MusicInformation.objects.create(name=i['name'],url=i['url'])
                     except Exception as e:
-                        movie = MusicInformation.objects.get(url=i['url'])
-                    kw.musicinformation.add(movie)
+                        music = MusicInformation.objects.get(url=i['url'])
+                    kw.musicinformation.add(music)
 
                 kw = MusicKeyword.objects.get(keyword=keyword)
                 info_list = kw.musicinformation.all()
@@ -149,8 +159,6 @@ def search_music(request):
 
 
 
-
-
 def get_history(request):
     pass
 
@@ -169,6 +177,10 @@ def get_rank(request):
 
 
 def get_keylist(request):
+
+    # todo 步骤1 查询redis
+    # todo 步骤2 查询mysql 更新redis
+    # todo 步骤3 交给爬虫 结束
 
     # todo 爬虫接口
     # 调用爬虫接口获取实时keylist
