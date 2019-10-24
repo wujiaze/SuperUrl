@@ -73,5 +73,5 @@ def make_token(user: UserProfile, expire=3600 * 24):
     user.login_time = login_datetime
     user.save()
     # 一般使用 用户名/登录时间 来生成token,用来校对
-    payload = {'username': user.username, 'exp': login_time + expire, 'login_time': login_time}
+    payload = {'phonenumber': user.phonenumber, 'exp': login_time + expire, 'login_time': login_time}
     return jwt.encode(payload, mysettings.Token_key, algorithm='HS256').decode()

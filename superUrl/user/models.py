@@ -4,7 +4,7 @@ from django.db import models
 # Create your models here.
 
 class UserProfile(models.Model):
-    phonenumber = models.CharField('用户名', max_length=11, unique=True)
+    phonenumber = models.CharField('手机号', max_length=11, unique=True)
     nickname = models.CharField('昵称', max_length=30, null=False)
     password = models.CharField('密码', max_length=32, null=False)
     avatar = models.ImageField(upload_to='avatar', null=True)

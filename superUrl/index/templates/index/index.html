@@ -81,7 +81,7 @@
 
 <body style="background-color:#f0f0f0;">
 <div class="container">
-
+    <button class="btn btn-default" id="btn_register" type="button">注册</button>
 
     <form class="form-horizontal" method="get" id="search" role="form">
         <div class="input-group">
@@ -130,6 +130,10 @@
     <p id="bottom">本站不存储任何音频文件，数据来自各网站接口，仅供个人学习、研究或者欣赏</p>
 </div>
 <script>
+    // todo 获取页面后，直接发送ajax请求，根据token的存在与否
+    // TODO 正确的话，就显示用户的个人信息
+    // TODO 不然就什么都不用显示
+
     var current_type = 'music';
     $('#btn_search').on('click', function () {
         // 根据当前类型，内容搜索
@@ -190,6 +194,9 @@
         $('#bdsug').stop(true, true).slideUp(300);
     });
 
+    $('#btn_register').on('click', function () {
+        window.location.href = '/v1/user/register'
+    });
 
 
     // 搜索具体内容
@@ -256,13 +263,13 @@
     }
 
 
-    var current_history_index = 1;
     var history_max_count = 10;
 
     // 保存本地历史
     function storeHistory() {
         if ($('#inp_search').val() !== "") {
-            if (current_history_index > history_max_count) {
+            var current_history_index = window.localStorage.getItem('current_history_index');
+            if (current_history_index == null) {
                 current_history_index = 1
             }
             flag = true;
@@ -274,21 +281,26 @@
             }
             if (flag === true) {
                 window.localStorage.setItem('history' + current_history_index, $('#inp_search').val());
-                current_history_index += 1
+                current_history_index = Number(current_history_index) + 1;
+                if (current_history_index > history_max_count) {
+                    current_history_index = 1
+                }
             }
+            window.localStorage.setItem('current_history_index', current_history_index);
         }
     }
 
     // 获取历史
     function getHistory() {
         var token = window.localStorage.getItem('superUrl_token');
-        var username = window.localStorage.getItem('superUrl_user');
+        var phonenumber = window.localStorage.getItem('superUrl_user');
         if (token == null) {
             // 本地获取
             var history = [];
+            var current_history_index = window.localStorage.getItem('current_history_index');
             for (let index = 1; index <= history_max_count; index++) {
                 item = window.localStorage.getItem('history' + index);
-                // console.log(item)
+                {#console.log(item);#}
                 if (item != null) {
                     if (current_history_index - 1 >= index) {
                         history[current_history_index - 1 - index] = item
@@ -301,7 +313,7 @@
         } else {
             // 网络获取
             data = {
-                username: username
+                phonenumber: phonenumber
             };
             $.ajax({
                 type: 'get',
@@ -328,7 +340,8 @@
     function showContent(content) {
         var html1 = '';
         for (let index = 0; index < content.length; index++) {
-            html1 += '<li data-key="" class="bdsug-store bdsug-overflow"><span>' + content[index] + '</span></li>';
+            if (content[index] !== undefined && content[index] != null && content[index] !== '')
+                html1 += '<li data-key="" class="bdsug-store bdsug-overflow"><span>' + content[index] + '</span></li>';
         }
         $('#bdsug>ul').html(html1);
         // 对 元素 进行绑定
