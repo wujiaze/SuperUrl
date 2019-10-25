@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'^v1/btoken',include('btoken.urls')),
     url(r'^v1/music',include('music.urls')),
     url(r'^v1/comment',include('comment.urls')),
+    url(r'^v1/history',include('history.urls'))
 
 ]

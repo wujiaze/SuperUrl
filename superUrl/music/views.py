@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from music.models import MusicInformation,MusicKeyword
 import json
+from history.views import save_history
 # Create your views here.
 
 
@@ -12,7 +13,7 @@ def search_music(request):
         # todo 步骤1 查询redis
         # todo 步骤2 查询mysql 更新redis
         # todo 步骤3 交给爬虫 结束
-
+        save_history(request,'music')
 
         print('进入get')
         keyword = request.GET.get('keyword')
