@@ -18,11 +18,12 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    #http://127.0.0.1:8000/v1/movie
-    url(r'^v1/movie',include('movie.urls')),
+    # http://127.0.0.1:8000/v1/movie
+    url(r'^v1/movie', include('movie.urls')),
     url(r'^v1/index', include('index.urls')),
+    url(r'^v1/user', include('user.urls')),
     url(r'^v1/btoken',include('btoken.urls')),
     url(r'^v1/music',include('music.urls')),
-    url(r'^v1/comment',include('comment.urls'))
+    url(r'^v1/comment',include('comment.urls')),
 
 ]

@@ -5,13 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>作业3</title>
+    <title>资源助手 - 注册界面</title>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/settings.js"></script>
     <style>
         #form1 {
             border: solid 0px red;
             width: 330px;
         }
-        
+
         #form1 label {
             display: inline-block;
             width: 80px;
@@ -21,73 +23,116 @@
             margin-right: 15px;
         }
 
-        #form1 .lang{
+        #form1 .lang {
             border: solid 1px #A8A8A8;
             padding: 5px 10px;
             width: 188px;
-            height:23px;
+            height: 23px;
         }
-        .inp #yan{
+
+        .inp #yan {
             width: 98px;
         }
-        #form1 .inp{
+
+        #form1 .inp {
             margin: 20px 0px;
         }
-        button{
+
+        button {
             width: 180px;
-            height:44px;
+            height: 44px;
             border-radius: 5px;
             background-color: #008123;
             color: white;
             border: none;
         }
-        #w{
+
+        #w {
             height: 45px;
             line-height: 44px;
         }
-        #w button{
+
+        #w button {
             height: 44px;
             line-height: 44px;
         }
-        #w label{
+
+        #w label {
             height: 44px;
             line-height: 44px;
-            vertical-align:bottom;
+            vertical-align: bottom;
         }
     </style>
 </head>
 
 <body>
-    <form action="" method="POST" id="form1">
-        <div class="inp">
-            <label for="">*邮箱地址:</label>
-            <input type="email" name="email" id="" class="lang">
-        </div>
-        <div class="inp"> 
-            <label for="">*设置密码:</label>
-            <input type="password" name="password" id="" class="lang">
-        </div>
-        <div class="inp">
-            <label for="">*兴趣标签:</label>
-            <input type="checkbox" name="" id="">新闻
-            <input type="checkbox" name="" id="">文化
-            <input type="checkbox" name="" id="">体育
-            <input type="checkbox" name="" id="">新闻
-        </div>
-        <div class="inp">
-            <label for="">*验证码:</label>
-            <input type="text" name="" id="yan" class="lang">
-        </div>
-        <div id="w">
-            <label for=""></label>
-            <button type="submit">立即注册</button>
-        </div>
-        <div id="s">
-            <label for=""></label>
-            <a href="http://" style="line-height: 39px;">新浪网络使用协议</a>
-        </div>
-    </form>
+<form action="/v1/user/register" method="POST" id="form1">
+    <div class="inp">
+        <label for="">*手机号码:</label>
+        <input type="tel" name="phonenumber" id="phonenumber" class="lang">
+    </div>
+    <div class="inp">
+        <label for="">*昵称:</label>
+        <input type="text" name="nickname" id="nickname" class="lang">
+    </div>
+    <div class="inp">
+        <label for="">*设置密码:</label>
+        <input type="password" name="password" id="password" class="lang">
+    </div>
+    {#        <div class="inp">#}
+    {#            <label for="">*兴趣标签:</label>#}
+    {#            <input type="checkbox" name="" id="">新闻#}
+    {#            <input type="checkbox" name="" id="">文化#}
+    {#            <input type="checkbox" name="" id="">体育#}
+    {#            <input type="checkbox" name="" id="">新闻#}
+    {#        </div>#}
+    <div class="inp">
+        <label for="">*验证码:</label>
+        <input type="text" name="authcode" id="authcode" class="lang">
+    </div>
+    <div id="w">
+        <label for=""></label>
+        <button type="button" onclick="regist()">立即注册</button>
+    </div>
+    <div id="s">
+        <label for=""></label>
+        <a href="http://" style="line-height: 39px;">资源助手使用协议</a>
+    </div>
+</form>
+<script>
+    {#$('#w button').on('click', fun)#}
 
+    function regist() {
+        var phonenumber = $('#phonenumber').val();
+        var nickname = $('#nickname').val();
+        var password = $('#password').val();
+        var authcode = $('#authcode').val();
+        var post_data = {'phonenumber': phonenumber, 'nickname': nickname, 'password': password, 'authcode': authcode};
+        $.ajax({
+            // 请求方式
+            type: "post",
+            // contentType
+            contentType: "application/json",
+            // dataType
+            dataType: "json",
+            // url
+            url: settings_url + "user/register",
+            // 把JS的对象或数组序列化一个json 字符串
+            data: JSON.stringify(post_data),
+            // result 为请求的返回结果对象
+            success: function (result) {
+                if (200 == result.code) {
+                    window.localStorage.setItem('superUrl_token', result.data.token);
+                    window.localStorage.setItem('superUrl_user', result.phonenumber);
+                    alert("注册成功");
+                    window.location.href = '/v1/index'
+                } else {
+                    alert(result.error)
+                }
+            }
+        });
+    }
+</script>
 </body>
 
 </html>
