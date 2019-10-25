@@ -84,8 +84,8 @@
     <button class="btn btn-default" id="btn_register" type="button">注册</button>
     <div id="userInfo">
         <img src="/static/image/getAvatar.jpg">
-        <span></span>>
-    </div>>
+        <span></span>
+    </div>
     <form class="form-horizontal" method="get" id="search" role="form">
         <div class="input-group">
             <input type="text" name="kw" id="inp_search" placeholder="歌曲名或专辑名进行搜索" class="form-control" value=""
@@ -232,6 +232,7 @@
         if (inp == null || inp === "") {
             url += "/rank"
         }
+        var token = window.localStorage.getItem('superUrl_token');
         $.ajax({
             type: 'get',
             contentType: "application/json",
