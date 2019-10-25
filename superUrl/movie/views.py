@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 import json
+from history.views import save_history
+
 # Create your views here.
 import redis
 from movie.models import MovieKeyword, MovieInfomation
@@ -19,6 +21,14 @@ def movie(request):
 
         r = redis.Redis(host='127.0.0.1', port=6379, db=4)
 
+
+
+        #如果没有输入关键字,返回榜单
+        # if not keyword:
+        #     result = {}
+        #     return JsonResponse(result)
+
+        #如果缓存有数据,返回data
         if r.exists(keyword):
             keyword = "info:music:" + keyword
             res = r.get(keyword)
