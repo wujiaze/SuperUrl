@@ -38,7 +38,7 @@ def save_history(request,type):
     if not user:
         return None
 
-    keyword = request.keyword
+    keyword = request.GET.get('keyword')
 
     history_list = user.history_set.all()   #jquery容器
 
