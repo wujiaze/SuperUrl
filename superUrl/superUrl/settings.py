@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'picture',
     'btoken',
     'history',
-    'comment'
+    'comment',
+    'rank_keylist'
 ]
 
 MIDDLEWARE = [
