@@ -82,7 +82,10 @@
 <body style="background-color:#f0f0f0;">
 <div class="container">
     <button class="btn btn-default" id="btn_register" type="button">注册</button>
-
+    <div id="userInfo">
+        <img src="/static/image/getAvatar.jpg">
+        <span></span>>
+    </div>>
     <form class="form-horizontal" method="get" id="search" role="form">
         <div class="input-group">
             <input type="text" name="kw" id="inp_search" placeholder="歌曲名或专辑名进行搜索" class="form-control" value=""
@@ -133,6 +136,25 @@
     // todo 获取页面后，直接发送ajax请求，根据token的存在与否
     // TODO 正确的话，就显示用户的个人信息
     // TODO 不然就什么都不用显示
+    function get_information() {
+        var url = '';
+        var token = window.localStorage.getItem('superUrl_token');
+        $.ajax({
+            type: 'get',
+            contentType: "application/json",
+            dataType: "json",
+            url: url,
+            beforeSend: function (request) {
+                request.setRequestHeader("Authorization", token);
+            },
+            success:function () {
+                var html ='';
+
+                $('#userInfo').html(html)
+            }
+        })
+    }
+
 
     var current_type = 'music';
     $('#btn_search').on('click', function () {
@@ -216,6 +238,9 @@
             dataType: "json",
             url: url,
             data: data,
+            beforeSend: function (request) {
+                request.setRequestHeader("Authorization", token);
+            },
             success: function (result, status, xhr) {
                 console.log(result);
                 if (result.code === 200) {

@@ -7,7 +7,7 @@ from django.shortcuts import render
 # Create your views here.
 from btoken.views import make_token
 from tools import mysettings
-from tools.logincheck import login_check
+from tools.logincheck import login_check, get_user_by_request
 from user.models import UserProfile
 
 
@@ -244,3 +244,17 @@ def register(request):
         code = 200
         data = {"token": token}
         return JsonResponse({'code': code, 'phonenumber': phonenumber, 'data': data})
+
+
+def information(request):
+    if request.method == "GET":
+        user = get_user_by_request(request)
+        if not user:
+            return JsonResponse({'code': 1, 'error': "没有登录"})
+        code = 200
+        data = {
+            'nickname': user.nickname,
+            'avatar': user.avatar.name,
+        }
+        return JsonResponse({'code': code, 'phonenumber': user.phonenumber, 'data': data})
+

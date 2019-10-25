@@ -40,8 +40,8 @@ def login_check(*methods):
                     return JsonResponse({'code': code, 'error': error})
                 try:
                     # 用token的数据比较安全
-                    username = payload['username']
-                    user = UserProfile.objects.get(username=username)
+                    phonenumber = payload['phonenumber']
+                    user = UserProfile.objects.get(phonenumber=phonenumber)
                 except Exception as e:
                     print(e)
                     code = 10208
@@ -82,10 +82,10 @@ def get_user_by_request(request):
     except Exception as e:
         return None
 
-    username = payload['username']
+    phonenumber = payload['phonenumber']
 
     try:
-        user = UserProfile.objects.get(username=username)
+        user = UserProfile.objects.get(phonenumber=phonenumber)
     except Exception as e:
         return None
 
