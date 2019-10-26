@@ -67,6 +67,7 @@ def search_music(request):
 
             except Exception as e:
                 print('都不存在')
+                print('----------------------------------------------')
             #todo 爬虫接口
             # 爬虫存到数据库
                 return JsonResponse({'code':20000,'eroor':'暂无资源'})

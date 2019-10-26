@@ -4,5 +4,5 @@ from history import views
 
 
 urlpatterns = [
-    url(r'^/history$',views.get_history)
+    url(r'^$',views.get_history)
 ]
