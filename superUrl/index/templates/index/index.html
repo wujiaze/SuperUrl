@@ -81,11 +81,20 @@
 
 <body style="background-color:#f0f0f0;">
 <div class="container">
-    <button class="btn btn-default" id="btn_register" type="button">注册</button>
+
     <div id="userInfo">
-        <img src="/static/image/getAvatar.jpg">
-        <span></span>
+        <div class="not_login" style="display: block">
+            <button class="btn btn-default" id="btn_register" type="button">注册</button>
+            <button class="btn btn-default" id="btn_login" type="button">登录</button>
+        </div>
+        <div class="login" style="display: none">
+            <img src="/static/image/getAvatar.jpg" class="avatar" >
+            <input type="file" name="avatar" id="avatar" value="选择头像">
+            亲,你好!<span></span>
+            <button id="logout" type="button">注销</button>
+        </div>
     </div>
+
     <form class="form-horizontal" method="get" id="search" role="form">
         <div class="input-group">
             <input type="text" name="kw" id="inp_search" placeholder="歌曲名或专辑名进行搜索" class="form-control" value=""
@@ -98,6 +107,7 @@
             </div>
         </div>
     </form>
+
     <div>
         <label for="">类别</label>
         <input type="radio" name="type" id="music" checked>音乐
@@ -130,31 +140,68 @@
         {#            </div>#}
         {#        </div>#}
     </div>
+
     <p id="bottom">本站不存储任何音频文件，数据来自各网站接口，仅供个人学习、研究或者欣赏</p>
+
 </div>
 <script>
-    // todo 获取页面后，直接发送ajax请求，根据token的存在与否
-    // TODO 正确的话，就显示用户的个人信息
-    // TODO 不然就什么都不用显示
+    get_information();
+
+    // 获取信息
     function get_information() {
-        var url = '';
         var token = window.localStorage.getItem('superUrl_token');
+        if (token == null) {
+            $('#userInfo>.not_login').css('display', 'block');
+            $('#userInfo>.login').css('display', 'none');
+            return
+        }
         $.ajax({
             type: 'get',
             contentType: "application/json",
             dataType: "json",
-            url: url,
+            url: settings_url + 'user/information',
             beforeSend: function (request) {
                 request.setRequestHeader("Authorization", token);
             },
-            success:function () {
-                var html ='';
+            success: function (response) {
+                if (response.code === 200) {
+                    if (response.data.avatar === "") {
+                        response.data.avatar = "/static/image/getAvatar.jpg"
+                    }
+                    $('#userInfo>.not_login').css('display', 'none');
+                    $('#userInfo>.login').css('display', 'block');
 
-                $('#userInfo').html(html)
+                    $('#userInfo>.login').children('img').attr('src', response.data.avatar);
+                    $('#userInfo>.login').children('span').text(response.data.nickname)
+                } else {
+                    $('#userInfo>.login').css('display', 'none');
+                    $('#userInfo>.not_login').css('display', 'block');
+                }
             }
         })
     }
 
+    // 注册
+    $('#btn_register').on('click', function () {
+        window.location.href = '/v1/user/register'
+    });
+    // 登录
+    $('#btn_login').on('click', function () {
+        window.location.href = '/v1/user/login'
+    });
+    // 登出
+    $('#logout').on('click', function () {
+            if (confirm("确定登出吗？")) {
+                window.localStorage.removeItem('superUrl_token');
+                window.localStorage.removeItem('superUrl_user');
+                window.location.href = '/v1/index';
+            }
+        }
+    );
+    // 点击头像
+    $('#userInfo>.login').children('img').on('click',function () {
+
+    });
 
     var current_type = 'music';
     $('#btn_search').on('click', function () {
@@ -214,10 +261,6 @@
 
     $('#inp_search').on('focusout', function () {
         $('#bdsug').stop(true, true).slideUp(300);
-    });
-
-    $('#btn_register').on('click', function () {
-        window.location.href = '/v1/user/register'
     });
 
 
