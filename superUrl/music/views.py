@@ -4,6 +4,7 @@ from django.shortcuts import render
 from music.models import MusicInformation,MusicKeyword
 import json
 from history.views import save_history
+from tools.sort import sort
 # Create your views here.
 
 
@@ -51,6 +52,8 @@ def search_music(request):
                     data_dict['star_avg'] = item.star_avg
                     data_dict['url'] = item.url
                     all_list.append(data_dict)
+
+                all_list = sort(all_list)
 
                 str_list = str(json.dumps(all_list))
                 keyword = "info:music:" + keyword
@@ -128,46 +131,6 @@ def search_music(request):
                 # #           'error':'暂无资源'}
                 #
                 # return JsonResponse(result)
-
-
-
-
-def get_history(request):
-
-    return JsonResponse({'code':20000,
-                         'error':'未完成'})
-
-
-
-
-
-def add_download(request):
-
-    return JsonResponse({'code':20000,
-                         'error':'未完成'})
-
-
-
-
-
-def get_rank(request):
-
-
-    return JsonResponse({'code':20000,
-                         'error':'未完成'})
-
-
-
-
-def get_keylist(request):
-    return JsonResponse({'code':20000,
-                         'error':'未完成'})
-    # todo 步骤1 查询redis
-    # todo 步骤2 查询mysql 更新redis
-    # todo 步骤3 交给爬虫 结束
-
-    # todo 爬虫接口
-    # 调用爬虫接口获取实时keylist
 
 
 

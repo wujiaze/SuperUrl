@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^v1/music',include('music.urls')),
     url(r'^v1/comment',include('comment.urls')),
     url(r'^v1/history',include('history.urls')),
-    url(r'^v1/download',include('download.urls'))
+    url(r'^v1/download',include('download.urls')),
+    url(r'^v1/rank_keylist',include('rank_keylist.urls'))
 
 ]
