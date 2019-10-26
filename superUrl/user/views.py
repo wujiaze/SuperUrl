@@ -160,8 +160,9 @@ def information(request):
         if not user:
             return JsonResponse({'code': 1, 'error': "没有登录"})
         code = 200
+
         data = {
             'nickname': user.nickname,
-            'avatar': "/media/" + user.avatar.name,
+            'avatar': "" if not user.avatar.name else "/media/" + user.avatar.name,
         }
         return JsonResponse({'code': code, 'phonenumber': user.phonenumber, 'data': data})
