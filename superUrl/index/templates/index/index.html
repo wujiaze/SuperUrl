@@ -123,7 +123,8 @@
             <button class="btn btn-default" id="btn_login" type="button">登录</button>
         </div>
         <div class="login" style="display: none">
-            <img src="/static/image/getAvatar.jpg" class="avatar" style="cursor: pointer;" id="avatar" width="50" height="50">
+            <img src="/static/image/getAvatar.jpg" class="avatar" style="cursor: pointer;" id="avatar" width="50"
+                 height="50">
             <div class="file-box" id="avatar_form" style="display: none">
                 <form action="" method="post" enctype="multipart/form-data">
                     <input type='text' name='textfield' id='textfield' class='txt'/>
@@ -319,7 +320,7 @@
     });
 
     $('#inp_search').on('input', function () {
-        // 关键字改变，根据类型，获取实时关键字
+        // 关键字改变，获取实时关键字
         search_keyword()
     });
 
@@ -390,13 +391,14 @@
             return
         }
         var data = {
-            keyword: inp
+            type: current_type,
+            kw: inp,
         };
         $.ajax({
             type: 'get',
             contentType: "application/json",
             dataType: "json",
-            url: settings_url + current_type + '/' + 'keylist',
+            url: settings_url + 'rank_keylist/keylist',
             data: data,
             success: function (result) {
                 if (result.code === 200) {
