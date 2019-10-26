@@ -5,6 +5,7 @@ from music.models import MusicInformation,MusicKeyword
 import json
 from history.views import save_history
 from tools.sort import query_sort
+from index.models import SpiderTask
 # Create your views here.
 
 
@@ -71,6 +72,7 @@ def search_music(request):
             except Exception as e:
                 print('都不存在')
                 print('----------------------------------------------')
+                SpiderTask.objects.create(type='music',keyword=keyword)
             #todo 爬虫接口
             # 爬虫存到数据库
                 return JsonResponse({'code':20000,'eroor':'暂无资源'})
