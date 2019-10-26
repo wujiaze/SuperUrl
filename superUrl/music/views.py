@@ -4,7 +4,7 @@ from django.shortcuts import render
 from music.models import MusicInformation,MusicKeyword
 import json
 from history.views import save_history
-from tools.sort import sort
+from tools.sort import query_sort
 # Create your views here.
 
 
@@ -52,8 +52,8 @@ def search_music(request):
                     data_dict['star_avg'] = item.star_avg
                     data_dict['url'] = item.url
                     all_list.append(data_dict)
-
-                all_list = sort(all_list)
+                high = len(all_list) - 1
+                all_list = query_sort(all_list,0,high)
 
                 str_list = str(json.dumps(all_list))
                 keyword = "info:music:" + keyword
