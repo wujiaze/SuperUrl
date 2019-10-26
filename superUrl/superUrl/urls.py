@@ -30,3 +30,11 @@ urlpatterns = [
     url(r'^v1/rank_keylist',include('rank_keylist.urls'))
 
 ]
+
+from django.conf.urls.static import static
+from django.conf import settings
+# 将访问路径 映射到 存储路径
+# 同时相当于创建了一个路由
+# r'^media/'
+# 类似于静态路径，只有在runserver时有效,上线后需要配置nginx
+urlpatterns += static(prefix=settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

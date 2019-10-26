@@ -12,32 +12,29 @@ from user.models import UserProfile
 
 
 @login_check('POST')
-def avatar(request, username):
+def avatar(request):
     if request.method != 'POST':
         code = 10203
         error = '请求方式不对'
         return JsonResponse({'code': code, 'error': error})
     if request.method == "POST":
+        print("avatar", request.body)
         # user 由装饰器提供
         user = request.user
-        if user.username != username:
-            code = 10205
-            error = '不可修改他人用户名'
-            return JsonResponse({'code': code, 'error': error})
         try:
             # <class 'django.core.files.uploadedfile.InMemoryUploadedFile'>
             avatar = request.FILES['avatar']
+            print(avatar)
         except Exception as e:
             code = 10206
             error = 'no avatar'
             return JsonResponse({'code': code, 'error': error})
-
         # <class 'django.db.models.fields.files.ImageFieldFile'>
         # InMemoryUploadedFile 可以赋给 ImageFieldFile
         user.avatar = avatar
         user.save()
         code = 200
-        return JsonResponse({'code': code, 'username': username})
+        return JsonResponse({'code': code})
 
 
 def register(request):
@@ -165,6 +162,6 @@ def information(request):
         code = 200
         data = {
             'nickname': user.nickname,
-            'avatar': user.avatar.name,
+            'avatar': "/media/" + user.avatar.name,
         }
         return JsonResponse({'code': code, 'phonenumber': user.phonenumber, 'data': data})

@@ -41,7 +41,6 @@ def save_history(request,type):
     keyword = request.GET.get('keyword')
 
     history_list = user.history_set.all()   #jquery容器
-
     length = len(history_list)
     if length > 15:
         history_list = history_list[length-15:]

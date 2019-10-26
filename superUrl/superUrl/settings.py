@@ -134,3 +134,4 @@ APPEND_SLASH = False
 # 媒体资源访问路径，自动应用于 ImageField
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+

@@ -75,6 +75,41 @@
             bottom: 10px;
             margin: 0 auto;
         }
+
+
+        #avatar_form {
+            position: relative;
+            width: 340px
+        }
+
+        #avatar_form input {
+            vertical-align: middle;
+            margin: 0;
+            padding: 0
+        }
+
+        #avatar_form .txt {
+            height: 22px;
+            border: 1px solid #cdcdcd;
+            width: 180px;
+        }
+
+        #avatar_form .btn {
+            background-color: #FFF;
+            border: 1px solid #CDCDCD;
+            height: 24px;
+            width: 70px;
+        }
+
+        #avatar_form .file {
+            position: absolute;
+            top: 0;
+            right: 80px;
+            height: 24px;
+            filter: alpha(opacity:0);
+            opacity: 0;
+            width: 260px
+        }
     </style>
 
 </head>
@@ -88,8 +123,17 @@
             <button class="btn btn-default" id="btn_login" type="button">登录</button>
         </div>
         <div class="login" style="display: none">
-            <img src="/static/image/getAvatar.jpg" class="avatar" >
-            <input type="file" name="avatar" id="avatar" value="选择头像">
+            <img src="/static/image/getAvatar.jpg" class="avatar" style="cursor: pointer;" id="avatar" width="50" height="50">
+            <div class="file-box" id="avatar_form" style="display: none">
+                <form action="" method="post" enctype="multipart/form-data">
+                    <input type='text' name='textfield' id='textfield' class='txt'/>
+                    <input type='button' class='btn' value='浏览...'/>
+                    <input type="file" name="fileField" class="file" id="fileField" size="28"
+                           onchange="document.getElementById('textfield').value=this.value"/>
+                    <input type="button" id="avatar_btn" class="btn" value="上传"/>
+                </form>
+            </div>
+
             亲,你好!<span></span>
             <button id="logout" type="button">注销</button>
         </div>
@@ -170,7 +214,6 @@
                     }
                     $('#userInfo>.not_login').css('display', 'none');
                     $('#userInfo>.login').css('display', 'block');
-
                     $('#userInfo>.login').children('img').attr('src', response.data.avatar);
                     $('#userInfo>.login').children('span').text(response.data.nickname)
                 } else {
@@ -199,9 +242,41 @@
         }
     );
     // 点击头像
-    $('#userInfo>.login').children('img').on('click',function () {
-
+    $('#avatar').on('click', function () {
+        var type = $('#avatar_form').css('display');
+        if (type === 'block') {
+            $('#avatar_form').css('display', 'none')
+        } else {
+            $('#avatar_form').css('display', 'block')
+        }
     });
+    // 上传头像
+    $('#avatar_btn').on('click', function () {
+        var token = window.localStorage.getItem('superUrl_token');
+        var url = settings_url + 'user/avatar';
+        formdata = new FormData();
+        formdata.append("avatar", $("#fileField")[0].files[0]);
+        $.ajax({
+            processData: false,
+            contentType: false,
+            url: url,
+            type: 'post',
+            data: formdata,
+            beforeSend: function (request) {
+                request.setRequestHeader("Authorization", token);
+            },
+            success: function (arg) {
+                if (arg.code === 200) {
+                    alert('成功！');
+                    window.location.reload()
+                } else {
+                    alert(arg.error)
+                }
+            }
+        });
+        {#$('#avatar_form').css('display', 'none')#}
+    });
+
 
     var current_type = 'music';
     $('#btn_search').on('click', function () {
