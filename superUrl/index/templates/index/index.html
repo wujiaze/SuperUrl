@@ -327,9 +327,11 @@
     $('#inp_search').on('focusin', function () {
         if ($('#inp_search').val() === "") {
             // 显示历史记录
+            //console.log(1)
             getHistory();
         } else {
             // 根据当前关键字的实时关键字信息
+            console.log(2)
             search_keyword();
         }
         $('#bdsug').stop(true, true).css('display', 'block');
@@ -449,6 +451,7 @@
 
     // 获取历史
     function getHistory() {
+        console.log(3)
         var token = window.localStorage.getItem('superUrl_token');
         var phonenumber = window.localStorage.getItem('superUrl_user');
         if (token == null) {

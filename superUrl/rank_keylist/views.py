@@ -3,14 +3,19 @@ import json
 import redis
 from django.http import JsonResponse
 from django.shortcuts import render
+from keylist_tools.tuchong import TuChongSpider
+from keylist_tools.wangyi import QQYinyueSpider
+from keylist_tools.maoyan import MaoyanSpider
 
 
 # Create your views here.
 
 def get_keylist(request):
     type_search = request.GET.get('type')
+    # print(type_search)
     keyword = request.GET.get('kw')
-
+    # print(keyword)
+    keyword_2 = keyword
     r = redis.Redis(host='127.0.0.1', port=6379, db=1)
     keyword = type_search + ':keylist:' + keyword
 
@@ -28,11 +33,38 @@ def get_keylist(request):
     else:
         # todo 爬虫爬取keylist 存储到redis
         # keylist = run(type,kw)
-        res = {
-            'code': 20000,
-            'error': '暂无数据'
-        }
-        return JsonResponse(res)
+
+        if type_search == 'picture':
+            keylist = TuChongSpider().run(keyword_2)
+            keylist = list(set(keylist))
+        elif type_search == 'music':
+            # print(keyword)
+            keylist = QQYinyueSpider().run(keyword_2)
+            keylist = list(set(keylist))
+            # print(keylist)
+        elif type_search == 'movie':
+            # print('join get music')
+            keylist = MaoyanSpider().run(keyword_2)
+            keylist = list(set(keylist))
+        else:
+            res = {
+                'code':20000,
+                'error':'暂无数据'
+            }
+            return JsonResponse(res)
+
+        if keyword:
+            res = {
+                'code': 200,
+                'data': keylist
+            }
+            return JsonResponse(res)
+        else:
+            res = {
+                'code':20000,
+                'error':'暂无数据'
+            }
+            return JsonResponse(res)
 
 
 def get_rank(requesst):
