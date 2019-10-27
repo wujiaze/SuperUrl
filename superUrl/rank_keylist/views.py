@@ -18,7 +18,7 @@ def get_keylist(request):
     keyword_2 = keyword
     r = redis.Redis(host='127.0.0.1', port=6379, db=1)
     keyword = type_search + ':keylist:' + keyword
-
+    keep_time = 60 * 60 * 24
     if r.exists(keyword):
         res = r.get(keyword)
         print(type(res.decode()))
@@ -52,6 +52,10 @@ def get_keylist(request):
                 'error':'暂无数据'
             }
             return JsonResponse(res)
+
+        res = json.dumps(keylist)
+        r.set(keyword, res)
+        r.expire(keyword, keep_time)
 
         if keyword:
             res = {
