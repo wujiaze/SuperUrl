@@ -1,0 +1,128 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#top {
+    height: 56px;
+    /* border: solid 1px seagreen; */
+    padding-right: 100px;
+}
+
+#top > div {
+    position: fixed;
+    /* border: red 1px solid; */
+    height: 56px;
+    width: auto;
+    right: 0px;
+}
+
+#top .login img {
+    vertical-align: bottom;
+    height: 50px;
+    width: 50px;
+    margin-right: 10px;
+}
+
+#top .login img:hover {
+    cursor: pointer;
+}
+
+#top .login span {
+    margin-left: 10px;
+    font-size: 18px;
+    line-height: 56px;
+}
+
+#top .login button {
+    margin: 0px 30px;
+    border-style: none;
+    font-size: 16px;
+    background-color: white;
+}
+
+#top .login button:hover {
+    cursor: pointer;
+    color: blue;
+}
+
+#top .not-login a {
+    margin-right: 30px;
+    font-size: 18px;
+    color: #000;
+    display: inline-block;
+    height: 56px;
+    line-height: 56px;
+}
+
+#top .not-login a:hover {
+    color: blue;
+}
+
+#middle {
+    margin: 0 auto;
+    width: 800px;
+}
+
+#middle img {
+    margin: 85px auto 45px;
+    width: 340px;
+    height: 165px;
+    display: block;
+}
+
+#middle > div {
+    width: 800px;
+    height: 45px;
+    font-size: 0;
+}
+
+#middle > div > input {
+    width: 664px;
+    height: 43px;
+    border: #999999 solid 0.8px;
+    border-right: none;
+    padding-left: 10px;
+    vertical-align: bottom;
+    font-size: 20px;
+}
+
+#middle > div > button {
+    width: 125px;
+    height: 45px;
+    border: none;
+    background-color: #317ef3;
+    color: white;
+    font-size: 20px;
+}
+
+#bottom {
+    position: fixed;
+    bottom: 80px;
+    width: 100%
+}
+
+#bottom > p {
+    width: 560px;
+    margin: 0 auto;
+    color: #999999;
+}
+
+#keylist {
+    list-style: none;
+    border: 1px #999999 solid;
+    border-top: none;
+    width: 673px;
+}
+
+#keylist li {
+    width: 663px;
+    padding-left: 10px;
+    height: 30px;
+    line-height: 30px;
+    color: #7a77c8;
+}
+
+#keylist li:hover {
+    background-color: #f0f0f0;
+}

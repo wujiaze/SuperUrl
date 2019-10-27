@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>资源助手 - 为您提供快捷高效的服务</title>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/common.js"></script>
+    <script src="/static/js/settings.js"></script>
+    <link rel="stylesheet" href="/static/css/baidu.css" id="link1">
+</head>
+
+<body>
+<script>
+    var history_max_count = 10;
+
+    // 获取信息
+    function get_information() {
+        var token = window.localStorage.getItem('superUrl_token');
+        if (token == null) {
+            $('#top .not-login').css('display', 'inline-block');
+            $('#top .login').css('display', 'none');
+            return
+        }
+        $.ajax({
+            type: 'get',
+            contentType: "application/json",
+            dataType: "json",
+            url: settings_url + 'user/information',
+            beforeSend: function (request) {
+                request.setRequestHeader("Authorization", token);
+            },
+            success: function (response) {
+                if (response.code === 200) {
+                    if (response.data.avatar === "") {
+                        response.data.avatar = "/static/image/getAvatar.jpg"
+                    }
+                    $('#top .not-login').css('display', 'none');
+                    $('#top .login').css('display', 'inline-block');
+                    $('#top .login').children('img').attr('src', response.data.avatar);
+                    $('#top .login').children('span').text(response.data.nickname)
+                } else {
+                    $('#top .login').css('display', 'none');
+                    $('#top .not-login').css('display', 'inline-block');
+                }
+            }
+        })
+    };
+
+    // 获取历史
+    function showHistory() {
+        var token = window.localStorage.getItem('superUrl_token');
+        var phonenumber = window.localStorage.getItem('superUrl_user');
+        if (token == null) {
+            // 本地获取
+            var history = [];
+            var current_history_index = window.localStorage.getItem('current_history_index');
+            for (let index = 1; index <= history_max_count; index++) {
+                item = window.localStorage.getItem('history' + index);
+                {#console.log(item);#}
+                if (item != null) {
+                    if (current_history_index - 1 >= index) {
+                        history[current_history_index - 1 - index] = item
+                    } else {
+                        history[current_history_index - 1 - index + history_max_count] = item
+                    }
+                }
+            }
+            showContent(history);
+        } else {
+            // 网络获取
+            var data = {
+                phonenumber: phonenumber
+            };
+            $.ajax({
+                type: 'get',
+                contentType: "application/json",
+                dataType: "json",
+                url: settings_url + 'history',
+                data: data,
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", token);
+                },
+                success: function (request) {
+                    if (request.code === 200) {
+                        console.log(request.data);
+                        showContent(request.data);
+                    } else {
+                        console.log(request.error);
+                    }
+                }
+            });
+        }
+    }
+
+    // 显示内容
+    function showContent(content) {
+        var html1 = '';
+        if (content == null || content.length === 0) {
+
+        } else {
+            for (let index = 0; index < content.length; index++) {
+                if (content[index] !== undefined && content[index] != null && content[index] !== '')
+                    html1 += '<li>' + content[index] + '</li>';
+            }
+        }
+        $('#keylist').html(html1);
+        $('#keylist').stop(true, true).css('display', 'block');
+        // 对 元素 进行绑定
+        $('#keylist li').each(function (event) {
+            $(this).on('click', function () {
+                // 显示在框中
+                $('#inp_search').val($(this).text());
+                change();
+                // 搜索
+                {#search()#}
+                $('#keylist').stop(true, true).css('display', 'none');
+            });
+        });
+    }
+
+    // 保存本地历史
+    function storeHistory() {
+        if ($('#inp_search').val() !== "") {
+            var current_history_index = window.localStorage.getItem('current_history_index');
+            if (current_history_index == null) {
+                current_history_index = 1
+            }
+            flag = true;
+            for (let index = 1; index <= history_max_count; index++) {
+                if ($('#inp_search').val() === window.localStorage.getItem('history' + index)) {
+                    flag = false;
+                    break
+                }
+            }
+            if (flag === true) {
+                window.localStorage.setItem('history' + current_history_index, $('#inp_search').val());
+                current_history_index = Number(current_history_index) + 1;
+                if (current_history_index > history_max_count) {
+                    current_history_index = 1
+                }
+            }
+            window.localStorage.setItem('current_history_index', current_history_index);
+        }
+    }
+
+    function change() {
+        $('#link1').remove();
+        $('head').append('<link rel="stylesheet" href="/static/css/baidu2.css" id="link2">')
+        // 删除上下元素
+        $('body #top').remove();
+        $('body #bottom').remove();
+        $('body #keylist').remove();
+        // 解绑本方法
+        $('#middle>div>input').unbind('input');
+        // 更换id，满足第二个css文件
+        $('#middle').attr('id', 'top_search');
+        // 合成html页面
+        $('#top_search').append($(index.search_right.html()));
+        $('body').append($(index.search_option.html()));
+        // TODO 其余合成页面
+
+        showHistory()
+        // 再次获取信息
+        get_information();
+        // 登出
+        $('#logout').on('click', function () {
+            if (confirm("确定登出吗？")) {
+                window.localStorage.removeItem('superUrl_token');
+                window.localStorage.removeItem('superUrl_user');
+                get_information();
+            }
+        });
+        // 点击头像
+        $('#avatar').on('click', function () {
+            var type = $('#avatar_form').css('display');
+            if (type === 'inline-block') {
+                $('#avatar_form').css('display', 'none')
+            } else {
+                $('#avatar_form').css('display', 'inline-block')
+            }
+        });
+        // 上传头像
+        $('#avatar_btn').on('click', function () {
+            var token = window.localStorage.getItem('superUrl_token');
+            var url = settings_url + 'user/avatar';
+            formdata = new FormData();
+            formdata.append("avatar", $("#fileField")[0].files[0]);
+            $.ajax({
+                processData: false,
+                contentType: false,
+                url: url,
+                type: 'post',
+                data: formdata,
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", token);
+                },
+                success: function (arg) {
+                    if (arg.code === 200) {
+                        alert('成功！');
+                        get_information();
+                        $('#avatar_form').css('display', 'none')
+                    } else {
+                        alert(arg.error)
+                        $('#avatar_form').css('display', 'none')
+                    }
+                }
+            });
+        });
+        // 切换选项
+        $('#option_search li').on("click", function () {
+            $('#option_search li').attr('class', 'none')
+            $(this).attr('class', 'select')
+        });
+
+        var current_type = 'music';
+        $('#inp_search').attr('placeholder', '根据歌曲名进行搜索')
+
+
+        // 保存本地历史
+        function storeHistory() {
+            if ($('#inp_search').val() !== "") {
+                var current_history_index = window.localStorage.getItem('current_history_index');
+                if (current_history_index == null) {
+                    current_history_index = 1
+                }
+                flag = true;
+                for (let index = 1; index <= history_max_count; index++) {
+                    if ($('#inp_search').val() === window.localStorage.getItem('history' + index)) {
+                        flag = false;
+                        break
+                    }
+                }
+                if (flag === true) {
+                    window.localStorage.setItem('history' + current_history_index, $('#inp_search').val());
+                    current_history_index = Number(current_history_index) + 1;
+                    if (current_history_index > history_max_count) {
+                        current_history_index = 1
+                    }
+                }
+                window.localStorage.setItem('current_history_index', current_history_index);
+            }
+        }
+
+        $('#music').on('click', function () {
+            // 切换到music
+            if (current_type !== 'music') {
+                current_type = 'music';
+                storeHistory();
+                // todo 获取新歌/热歌
+                {#search();#}
+            }
+            $('#inp_search').attr('placeholder', '根据歌曲名进行搜索')
+        });
+
+        $('#movie').on('click', function () {
+            // 切换到电影
+            if (current_type !== 'movie') {
+                current_type = 'movie';
+                storeHistory();
+                // 搜索电影
+                {#search();#}
+            }
+            $('#inp_search').attr('placeholder', '根据电影名进行搜索')
+        });
+        $('#picture').on('click', function () {
+            // 切换到picture
+            if (current_type !== 'picture') {
+                // 搜索picture
+                current_type = 'picture';
+                storeHistory();
+                {#search();#}
+            }
+            $('#inp_search').attr('placeholder', '根据关键字进行搜索')
+        });
+
+
+        $('#inp_search').on('input', function () {
+            // 关键字改变，获取实时关键字
+            {#window.setTimeout(search_keyword, 500);#}
+            console.log(222)
+        });
+        $('#inp_search').on('focusin', function () {
+            console.log(11)
+            if ($('#inp_search').val() === "") {
+                // 显示历史记录
+                showHistory();
+            } else {
+                // 根据当前关键字的实时关键字信息
+                {#search_keyword();#}
+            }
+            $('#bdsug').stop(true, true).css('display', 'block');
+        });
+
+        $('#top_search>div>button').unbind()
+
+        // var last_time;
+        // $('#option_search .select').on('click', function (event) {
+        //     last_time = event.timeStamp;
+        //     console.log("设置前", event.timeStamp)
+        //     setTimeout(function () {
+        //         console.log("设置后", event.timeStamp)
+        //         if (event.timeStamp - last_time == 0) {
+        //             console.log(1)
+        //         }
+        //     }, 130)
+        // });
+    }
+
+    $(function () {
+        // 显示首页
+        $('body').html($(index.index.html()));
+        // 获取用户信息
+        get_information();
+        // 登出
+        $('#logout').on('click', function () {
+            if (confirm("确定登出吗？")) {
+                window.localStorage.removeItem('superUrl_token');
+                window.localStorage.removeItem('superUrl_user');
+                get_information();
+            }
+        });
+        // 点击头像
+        $('#avatar').on('click', function () {
+            var type = $('#avatar_form').css('display');
+            if (type === 'inline-block') {
+                $('#avatar_form').css('display', 'none')
+            } else {
+                $('#avatar_form').css('display', 'inline-block')
+            }
+        });
+        // 上传头像
+        $('#avatar_btn').on('click', function () {
+            var token = window.localStorage.getItem('superUrl_token');
+            var url = settings_url + 'user/avatar';
+            formdata = new FormData();
+            formdata.append("avatar", $("#fileField")[0].files[0]);
+            $.ajax({
+                processData: false,
+                contentType: false,
+                url: url,
+                type: 'post',
+                data: formdata,
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", token);
+                },
+                success: function (arg) {
+                    if (arg.code === 200) {
+                        alert('成功！');
+                        window.location.reload()
+                    } else {
+                        alert(arg.error)
+                    }
+                }
+            });
+        });
+        // 首页按钮事件
+        $('#middle>div>button').on('click', function name(params) {
+            window.location.href = '/v1/index'
+        });
+        // 首页输入框焦点
+        $('#middle>div>input').on('focusin', function () {
+            if ($('#inp_search').val() === "") {
+                // 显示历史记录
+                showHistory()
+            } else {
+                // 根据当前关键字的实时关键字信息
+                search_keyword();
+            }
+            $('#keylist').stop(true, true).css('display', 'block');
+        });
+        // 首页输入框失去焦点
+        $('#middle>div>input').on('focusout', function () {
+            {#showContent(null)#}
+            $('#keylist').stop(true, true).slideUp(300);
+        });
+
+        // 输入框改变事件
+        $('#middle>div>input').on('input propertychange', function () {
+            change();
+        });
+
+
+    });
+
+
+</script>
+</body>
+
+</html>

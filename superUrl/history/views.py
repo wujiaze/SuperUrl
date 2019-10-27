@@ -4,6 +4,8 @@ from django.shortcuts import render
 from tools.logincheck import get_user_by_request
 from user.models import UserProfile
 from history.models import History
+
+
 # Create your views here.
 
 
@@ -13,8 +15,8 @@ def get_history(request):
         user = get_user_by_request(request)
         if not user:
             res = {
-                'code':20000,
-                'error':'no token'
+                'code': 20000,
+                'error': 'no token'
             }
             return JsonResponse(res)
 
@@ -24,15 +26,14 @@ def get_history(request):
             res_list.append(item.keyword)
 
         res = {
-            'code':200,
-            'data':res_list
+            'code': 200,
+            'data': res_list
         }
         return JsonResponse(res)
-    return JsonResponse({'code':20000,'error':'not get'})
+    return JsonResponse({'code': 20000, 'error': 'not get'})
 
 
-
-def save_history(request,type):
+def save_history(request, type):
     user = get_user_by_request(request)
 
     if not user:
@@ -40,15 +41,12 @@ def save_history(request,type):
 
     keyword = request.GET.get('keyword')
 
-    history_list = user.history_set.all()   #jquery容器
+    history_list = user.history_set.all()  # jquery容器
     length = len(history_list)
     if length > 15:
-        history_list = history_list[length-15:]
+        history_list = history_list[length - 15:]
     for item in history_list:
         if item.objects.keyword == keyword:
             item.delete()
             break
-    history = History.objects.create(keyword=keyword,userprofile=user)
-
-
-
+    history = History.objects.create(keyword=keyword, userprofile=user)

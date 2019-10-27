@@ -10,41 +10,10 @@ from tools import mysettings
 from tools.logincheck import login_check, get_user_by_request
 from user.models import UserProfile
 
-
-@login_check('POST')
-def avatar(request):
-    if request.method != 'POST':
-        code = 10203
-        error = '请求方式不对'
-        return JsonResponse({'code': code, 'error': error})
-    if request.method == "POST":
-        print("avatar", request.body)
-        # user 由装饰器提供
-        user = request.user
-        try:
-            # <class 'django.core.files.uploadedfile.InMemoryUploadedFile'>
-            avatar = request.FILES['avatar']
-            print(avatar)
-        except Exception as e:
-            code = 10206
-            error = 'no avatar'
-            return JsonResponse({'code': code, 'error': error})
-        # <class 'django.db.models.fields.files.ImageFieldFile'>
-        # InMemoryUploadedFile 可以赋给 ImageFieldFile
-        user.avatar = avatar
-        user.save()
-        code = 200
-        return JsonResponse({'code': code})
-
-
 def register(request):
     if request.method == 'GET':
         return render(request, 'user/register.html')
     if request.method == 'POST':
-        # 创建资源 创建用户
-        # 注册成功/直接登录  签发token[1天]
-        # 用户模块状态吗 10100 开始 / 200为正常响应
-        # {'code':200/101xx,'data':xxx,'error':xxx}
         print(request.body)
         try:
             json_obj = json.loads(request.body.decode())
@@ -53,6 +22,7 @@ def register(request):
             nickname = json_obj['nickname']
             password = json_obj['password']
             authcode = json_obj['authcode']
+            checked = json_obj.get('checked')
         except Exception as e:
             print("user/POST/try1/", e)
             code = 10100
@@ -61,24 +31,32 @@ def register(request):
 
         if not phonenumber:
             code = 10101
-            error = "请输入手机号"
+            error = "请输入用户名"
+            return JsonResponse({'code': code, 'error': error})
+        if len(phonenumber) != 11:
+            code = 208
+            error = "请输入正确的用户名"
             return JsonResponse({'code': code, 'error': error})
         if not nickname:
             code = 10102
             error = "请输入昵称"
             return JsonResponse({'code': code, 'error': error})
         if not password:
-            code = 205
+            code = 10205
             error = "请输入密码"
             return JsonResponse({'code': code, 'error': error})
-        if len(phonenumber) != 11:
-            code = 208
-            error = "请输入正确的手机号"
+        if not checked:
+            code = 10206
+            error = "请勾选使用协议"
+            return JsonResponse({'code': code, 'error': error})
+        if not authcode:
+            code = 10207
+            error = "验证码错误"
             return JsonResponse({'code': code, 'error': error})
 
         older_user = UserProfile.objects.filter(phonenumber=phonenumber)
         if older_user:
-            code = 207
+            code = 10207
             error = "用户名已存在"
             return JsonResponse({'code': code, 'error': error})
 
@@ -166,3 +144,28 @@ def information(request):
             'avatar': "" if not user.avatar.name else "/media/" + user.avatar.name,
         }
         return JsonResponse({'code': code, 'phonenumber': user.phonenumber, 'data': data})
+
+@login_check('POST')
+def avatar(request):
+    if request.method != 'POST':
+        code = 10203
+        error = '图片太大了'
+        return JsonResponse({'code': code, 'error': error})
+    if request.method == "POST":
+        print("avatar", request.body)
+        # user 由装饰器提供
+        user = request.user
+        try:
+            # <class 'django.core.files.uploadedfile.InMemoryUploadedFile'>
+            avatar = request.FILES['avatar']
+            print(avatar)
+        except Exception as e:
+            code = 10206
+            error = 'no avatar'
+            return JsonResponse({'code': code, 'error': error})
+        # <class 'django.db.models.fields.files.ImageFieldFile'>
+        # InMemoryUploadedFile 可以赋给 ImageFieldFile
+        user.avatar = avatar
+        user.save()
+        code = 200
+        return JsonResponse({'code': code})

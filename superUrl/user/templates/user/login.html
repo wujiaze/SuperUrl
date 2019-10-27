@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>练习1</title>
+    <title>资源助手 - 登陆界面</title>
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/settings.js"></script>
     <style>
@@ -14,55 +14,137 @@
             padding: 0;
         }
 
-        #reg {
-            width: 413px;
-            border: 0px solid red;
-            padding: 0 10px 40px;
+        #login .top {
+            width: 100%;
+            height: 88px;
+            /* border: red solid 1px; */
+
         }
 
-        /* 记录到选择器 这个后代 */
-        #reg label {
+        #login .top .top_middle {
+            border-bottom: solid 1px #ebebeb;
+            width: 980px;
+            margin: 0 auto;
+            padding: 10px 0px;
+            position: relative;
+        }
+
+        #login .top .top_middle img {
+            width: 135px;
+            height: 68px;
+            vertical-align: bottom;
+        }
+
+        #login .top .top_middle label {
+            height: 25px;
+            line-height: 25px;
             display: inline-block;
-            width: 50px;
-            height: 40px;
-            line-height: 40px;
+            font-size: 20px;
+            color: #666666;
+            margin-bottom: 10px;
+            border-left: 1px solid #c9c9c9;
+            padding-left: 15px;
+            ;
+            margin-left: 15px;
+        }
+
+        #login .top .top_middle .right {
+            display: inline-block;
+            position: absolute;
+            right: 0px;
+            height: 68px;
+            line-height: 68px;
+
+        }
+
+        #login .top .top_middle span {
+            font-size: 14px;
+            color: #666666;
+        }
+
+        #login .top .top_middle .right button {
+            width: 63px;
+            height: 33px;
+            border: 1px solid #dddddd;
+            background-color: #f7f7f7;
+            border-radius: 5px;
+            font-weight: 600;
+            color: #666666;
+        }
+
+
+        #login .middle .text {
+            /* border: red 1px solid; */
+            width: 980px;
+            margin: 0 auto;
+        }
+
+        #login .middle #form1 {
+            border: solid 0px red;
+            width: 480px;
+            margin-top: 58px;
+        }
+
+        #login .middle #form1 label {
+            display: inline-block;
+            width: 80px;
             text-align: right;
-            margin-right: 40px;
-        }
-
-        #reg .txt {
-            width: 300px;
-            height: 26px;
-            padding: 5px 0px 5px 10px;
-            font-size: 16px;
-        }
-
-        .hang {
-            margin-top: 18px;
-        }
-
-        #reg .btn {
-            width: 145px;
             height: 38px;
-            background-color: #f5ffed;
-            border: solid 1px #64a131;
-            color: #64a131;
-            border-radius: 3px;
-            margin: 20px 6px 0px 0px;
-            font-size: 18px;
+            line-height: 38px;
+            margin-right: 15px;
         }
 
-        #reg .btn:hover {
-            background-color: #64a131;
-            color: #ffffff;
+        #login .middle #form1 .lang {
+            border: solid 1px #A8A8A8;
+            padding: 5px 10px;
+            width: 350px;
+            height: 28px;
         }
 
-        #reg a {
-            color: #666;
+        #login .middle #form1 .lang_yan {
+            border: solid 1px #A8A8A8;
+            padding: 5px 10px;
+            width: 180px;
+            height: 28px;
         }
 
-        a:first-of-type {
-            margin-left: 75px;
+        #login .middle #form1 .inp .btn {
+            width: 160px;
+            height: 40px;
+            border-radius: 5px;
+            background-color: #eeeeee;
+            color: #666666;
+            border: none;
+        }
+
+        #login .middle #form1 .inp {
+            margin: 20px 0px;
+        }
+
+        #login .middle #form1 #w button {
+            width: 370px;
+            height: 50px;
+            border-radius: 5px;
+            background-color: #449df7;
+            color: white;
+            border: none;
+        }
+
+        #login .middle #form1 #w {
+            height: 45px;
+            line-height: 44px;
+        }
+
+        #login .middle #form1 #w button {
+            margin-top: 20px;
+            height: 44px;
+            line-height: 44px;
+        }
+
+        #login .middle #form1 #w label {
+            height: 44px;
+            line-height: 44px;
+            vertical-align: bottom;
         }
     </style>
 </head>
@@ -72,29 +154,44 @@
 <!-- 2.添加页面元素 -->
 <!-- 3.编写元素样式 -->
 <!-- 4.调优代码 -->
-<div id="reg">
-    <form action="" method="POST">
-        <div class="hang">
-            <label for="">手机号</label>
-            <input type="tel" id="phonenumber" class="txt">
+  <div id="login">
+        <div class="top">
+            <div class="top_middle">
+                <img src="/static/image/search.jpg" alt="">
+                <label>登陆十度账号</label>
+                <div class="right">
+                    <span>现在就</span>
+                    <button onclick="window.location.href = '/v1/user/register'">注册</button>
+                </div>
+
+            </div>
         </div>
-        <div class="hang">
-            <label for="">密码</label>
-            <input type="password" id="password" class="txt" placeholder="请输入6-20位号码字符">
+        <div class="middle">
+            <div class="text">
+                <form action="/v1/user/login" method="POST" id="form1">
+                    <div class="inp">
+                        <label for="">*用户名</label>
+                        <input type="tel" name="phonenumber" id="phonenumber" class="lang">
+                    </div>
+
+                    <div class="inp">
+                        <label for="">*密码</label>
+                        <input type="password" name="password" id="password" class="lang">
+                    </div>
+                    <div class="hang">
+                            <label for=""></label>
+                            <input type="checkbox" name="checkbox" id="checkbox">记住密码
+                            <a href="javascript:;">忘记密码?</a>
+                            <a href="javascript:;">快捷登录</a>
+                        </div>
+                    <div id="w">
+                        <label for=""></label>
+                        <button type="button" onclick="regist()">登陆</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="hang">
-            <label for=""></label>
-            <input type="checkbox" name="checkbox" id="checkbox">记住密码
-            <a href="javascript:;">忘记密码?</a>
-            <a href="javascript:;">快捷登录</a>
-        </div>
-        <div>
-            <label for=""></label>
-            <input type="button" value="登录" class="btn" onclick="regist()">
-            <input type="button" value="注册会员" class="btn">
-        </div>
-    </form>
-</div>
+    </div>
 <script>
     function regist() {
         var phonenumber = $('#phonenumber').val();

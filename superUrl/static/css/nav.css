@@ -1,0 +1,21 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#top {
+    background-color: #004100;
+    height: 56px;
+}
+
+#top img {
+    height: 56px;
+}
+
+/*<div id="top">*/
+/*    <img src="/static/image/getAvatar.jpg">*/
+/*    <input type="text" name="kw" id="inp_search" placeholder="歌曲名或专辑名进行搜索" autocomplete="off">*/
+/*    <button id="btn_search" type="button">搜索</button>*/
+/*    <button id="btn_register" type="button">注册</button>*/
+/*    <button id="btn_login" type="button">登录</button>*/
+/*</div>*/

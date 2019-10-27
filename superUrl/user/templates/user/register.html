@@ -9,55 +9,137 @@
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/settings.js"></script>
     <style>
-        #form1 {
-            border: solid 0px red;
-            width: 330px;
+        * {
+            margin: 0;
+            padding: 0;
         }
 
-        #form1 label {
+        #register .top {
+            width: 100%;
+            height: 88px;
+            /* border: red solid 1px; */
+
+        }
+
+        #register .top .top_middle {
+            border-bottom: solid 1px #ebebeb;
+            width: 980px;
+            margin: 0 auto;
+            padding: 10px 0px;
+            position: relative;
+        }
+
+        #register .top .top_middle img {
+            width: 135px;
+            height: 68px;
+            vertical-align: bottom;
+        }
+
+        #register .top .top_middle label {
+            height: 25px;
+            line-height: 25px;
+            display: inline-block;
+            font-size: 20px;
+            color: #666666;
+            margin-bottom: 10px;
+            border-left: 1px solid #c9c9c9;
+            padding-left: 15px;;
+            margin-left: 15px;
+        }
+
+        #register .top .top_middle .right {
+            display: inline-block;
+            position: absolute;
+            right: 0px;
+            height: 68px;
+            line-height: 68px;
+
+        }
+
+        #register .top .top_middle span {
+            font-size: 14px;
+            color: #666666;
+        }
+
+        #register .top .top_middle .right button {
+            width: 63px;
+            height: 33px;
+            border: 1px solid #dddddd;
+            background-color: #f7f7f7;
+            border-radius: 5px;
+            font-weight: 600;
+            color: #666666;
+        }
+
+
+        #register .middle .text {
+            /* border: red 1px solid; */
+            width: 980px;
+            margin: 0 auto;
+        }
+
+        #register .middle #form1 {
+            border: solid 0px red;
+            width: 480px;
+            margin-top: 58px;
+        }
+
+        #register .middle #form1 label {
             display: inline-block;
             width: 80px;
             text-align: right;
-            height: 35px;
-            line-height: 35px;
+            height: 38px;
+            line-height: 38px;
             margin-right: 15px;
         }
 
-        #form1 .lang {
+        #register .middle #form1 .lang {
             border: solid 1px #A8A8A8;
             padding: 5px 10px;
-            width: 188px;
-            height: 23px;
+            width: 350px;
+            height: 28px;
         }
 
-        .inp #yan {
-            width: 98px;
+        #register .middle #form1 .lang_yan {
+            border: solid 1px #A8A8A8;
+            padding: 5px 10px;
+            width: 180px;
+            height: 28px;
         }
 
-        #form1 .inp {
+        #register .middle #form1 .inp .btn {
+            width: 160px;
+            height: 40px;
+            border-radius: 5px;
+            background-color: #eeeeee;
+            color: #666666;
+            border: none;
+        }
+
+        #register .middle #form1 .inp {
             margin: 20px 0px;
         }
 
-        button {
-            width: 180px;
-            height: 44px;
+        #register .middle #form1 #w button {
+            width: 370px;
+            height: 50px;
             border-radius: 5px;
-            background-color: #008123;
+            background-color: #449df7;
             color: white;
             border: none;
         }
 
-        #w {
+        #register .middle #form1 #w {
             height: 45px;
             line-height: 44px;
         }
 
-        #w button {
+        #register .middle #form1 #w button {
             height: 44px;
             line-height: 44px;
         }
 
-        #w label {
+        #register .middle #form1 #w label {
             height: 44px;
             line-height: 44px;
             vertical-align: bottom;
@@ -66,48 +148,70 @@
 </head>
 
 <body>
-<form action="/v1/user/register" method="POST" id="form1">
-    <div class="inp">
-        <label for="">*手机号码:</label>
-        <input type="tel" name="phonenumber" id="phonenumber" class="lang">
+<div id="register">
+    <div class="top">
+        <div class="top_middle">
+            <img src="/static/image/search.jpg" alt="">
+            <label>注册十度账号</label>
+            <div class="right">
+                <span>我已注册，现在就</span>
+                <button onclick="window.location.href = '/v1/user/login'">登陆
+                </button>
+            </div>
+
+        </div>
     </div>
-    <div class="inp">
-        <label for="">*昵称:</label>
-        <input type="text" name="nickname" id="nickname" class="lang">
+    <div class="middle">
+        <div class="text">
+            <form action="/v1/user/register" method="POST" id="form1">
+                <div class="inp">
+                    <label for="">*昵称</label>
+                    <input type="text" name="nickname" id="nickname" class="lang" placeholder="">
+                </div>
+                <div class="inp">
+                    <label for="">*用户名</label>
+                    <input type="tel" name="phonenumber" id="phonenumber" class="lang" placeholder="请输入手机号">
+                </div>
+
+                <div class="inp">
+                    <label for="">*设置密码</label>
+                    <input type="password" name="password" id="password" class="lang">
+                </div>
+                <div class="inp">
+                    <label for="">*验证码</label>
+                    <input type="text" name="authcode" id="authcode" class="lang_yan">
+                    <input type="button" value="获取短信验证码" class="btn">
+                </div>
+                <div id="s">
+                    <label for=""></label>
+                    <input type="checkbox" name="" id="checkbox">
+                    <a href="http://" style="line-height: 39px;">资源助手使用协议</a>
+                </div>
+                <div id="w">
+                    <label for=""></label>
+                    <button type="button" onclick="regist()">立即注册</button>
+                </div>
+
+            </form>
+        </div>
+
     </div>
-    <div class="inp">
-        <label for="">*设置密码:</label>
-        <input type="password" name="password" id="password" class="lang">
-    </div>
-    {#        <div class="inp">#}
-    {#            <label for="">*兴趣标签:</label>#}
-    {#            <input type="checkbox" name="" id="">新闻#}
-    {#            <input type="checkbox" name="" id="">文化#}
-    {#            <input type="checkbox" name="" id="">体育#}
-    {#            <input type="checkbox" name="" id="">新闻#}
-    {#        </div>#}
-    <div class="inp">
-        <label for="">*验证码:</label>
-        <input type="text" name="authcode" id="authcode" class="lang">
-    </div>
-    <div id="w">
-        <label for=""></label>
-        <button type="button" onclick="regist()">立即注册</button>
-    </div>
-    <div id="s">
-        <label for=""></label>
-        <a href="http://" style="line-height: 39px;">资源助手使用协议</a>
-    </div>
-</form>
+</div>
 <script>
-    {#$('#w button').on('click', fun)#}
 
     function regist() {
-        var phonenumber = $('#phonenumber').val();
         var nickname = $('#nickname').val();
+        var phonenumber = $('#phonenumber').val();
         var password = $('#password').val();
         var authcode = $('#authcode').val();
-        var post_data = {'phonenumber': phonenumber, 'nickname': nickname, 'password': password, 'authcode': authcode};
+        var checked = $('#checkbox').attr('checked');
+        var post_data = {
+            'phonenumber': phonenumber,
+            'nickname': nickname,
+            'password': password,
+            'authcode': authcode,
+            'checked': checked
+        };
         $.ajax({
             // 请求方式
             type: "post",
@@ -121,7 +225,7 @@
             data: JSON.stringify(post_data),
             // result 为请求的返回结果对象
             success: function (result) {
-                if (200 == result.code) {
+                if (200 === result.code) {
                     window.localStorage.setItem('superUrl_token', result.data.token);
                     window.localStorage.setItem('superUrl_user', result.phonenumber);
                     alert("注册成功");

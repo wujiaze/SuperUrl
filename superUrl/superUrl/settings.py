@@ -135,3 +135,4 @@ APPEND_SLASH = False
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 4
