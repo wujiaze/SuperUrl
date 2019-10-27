@@ -6,7 +6,7 @@ from django.shortcuts import render
 from keylist_tools.tuchong import TuChongSpider
 from keylist_tools.wangyi import QQYinyueSpider
 from keylist_tools.maoyan import MaoyanSpider
-
+from keylist_tools.duyyy_movie import DutttSpider
 
 # Create your views here.
 
@@ -36,20 +36,32 @@ def get_keylist(request):
 
         if type_search == 'picture':
             keylist = TuChongSpider().run(keyword_2)
-            keylist = list(set(keylist))
+            if keylist:
+                keylist = list(set(keylist))
         elif type_search == 'music':
             # print(keyword)
             keylist = QQYinyueSpider().run(keyword_2)
-            keylist = list(set(keylist))
+            if keylist:
+                keylist = list(set(keylist))
             # print(keylist)
         elif type_search == 'movie':
             # print('join get music')
+            # keylist = MaoyanSpider().run(keyword_2)
             keylist = MaoyanSpider().run(keyword_2)
-            keylist = list(set(keylist))
+            if keylist:
+                keylist = list(set(keylist))
+
         else:
             res = {
                 'code':20000,
                 'error':'暂无数据'
+            }
+            return JsonResponse(res)
+
+        if not keylist:
+            res = {
+                'code': 20000,
+                'error': '暂无数据'
             }
             return JsonResponse(res)
 
