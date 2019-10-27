@@ -318,7 +318,7 @@
             if (event.timeStamp - last_time === 0) {
                 search_keyword()
             }
-        }, 130)
+        }, 200)
     });
 
 
@@ -328,12 +328,13 @@
         $(this).attr('class', 'select')
     });
 
+
     $('#music').on('click', function () {
         // 切换到music
         if (current_type !== 'music') {
             current_type = 'music';
             storeHistory();
-            {#search();#}
+            search();
         }
         $('#inp_search').attr('placeholder', '根据歌曲名进行搜索')
     });
@@ -343,7 +344,7 @@
             current_type = 'movie';
             storeHistory();
             // 搜索电影
-            {#search();#}
+            search();
 
         }
         $('#inp_search').attr('placeholder', '根据电影名进行搜索')
@@ -354,7 +355,7 @@
             storeHistory();
             // 搜索picture
             current_type = 'picture';
-            {#search();#}
+            search();
         }
         $('#inp_search').attr('placeholder', '根据关键字进行搜索')
     });
@@ -362,9 +363,9 @@
         // 根据当前类型，内容搜索
         var inp = $('#inp_search').val();
         if (inp != null && inp !== '') {
-            search();
             // 保存历史记录
             storeHistory();
+            search();
         }
     });
 
@@ -455,14 +456,18 @@
         $('#keylist li').each(function (event) {
             $(this).on('click', function () {
                 // 显示在框中
-                $('#inp_search').val($(this).text());
+                var txt = $(this).text();
+                if (txt.length > 30) {
+                    var fin = txt.substring(0, 26) + "..."
+                }
+                $('#inp_search').val(fin);
                 // 搜索
                 {#search()#}
             });
         });
     }
 
-      // 根据输入值，获取关键字列表
+    // 根据输入值，获取关键字列表
     function search_keyword() {
         var inp = $('#inp_search').val();
         if (inp == null || inp === '') {
@@ -489,8 +494,61 @@
             }
         });
     }
+
+    // 搜索具体内容
+    function search() {
+        var inp = $('#inp_search').val();
+        var url = '';
+        if (inp == null || inp === "") {
+            // 空节获取榜单
+            url = settings_url + 'rank_keylist/rank'
+        } else {
+            // 获取具体信息
+            url = settings_url + current_type;
+        }
+        // 发送消息
+        var data = {
+            keyword: inp,
+            type: current_type
+        };
+        var token = window.localStorage.getItem('superUrl_token');
+        $.ajax({
+            type: 'get',
+            contentType: "application/json",
+            dataType: "json",
+            url: url,
+            data: data,
+            beforeSend: function (request) {
+                request.setRequestHeader("Authorization", token);
+            },
+            success: function (result, status, xhr) {
+                console.log(result);
+                if (result.code === 200) {
+                    {#$('#show').css('display', 'block');#}
+                    switch (result.type) {
+                        case 'music':
+                            // [{new:[]},{hot:[]}]
+                            // [{search:[]}]
+                            showMusic(result.data);
+                            break;
+                        case 'movie':
+                            showMovie(result.data);
+                            break;
+                        case 'picture':
+                            showPicture(result.data);
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    $('#show').css('display', 'none');
+                    {#alert(result.error)#}
+                }
+            }
+        });
+    }
+
+
 </script>
 </body>
-
-
 </html>
