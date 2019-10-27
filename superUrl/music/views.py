@@ -1,3 +1,5 @@
+import random
+
 import redis
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -124,7 +126,9 @@ def search_music(request):
                             str(item.url)]
                     res = ','.join(info)
                     redis_list.append(res)
+                keep_time = 60 * 60 *24
                 r.lpush(keyword, redis_list)
+                r.expire(keyword,random.randint(keep_time,2*keep_time))
 
                 result = {
                     'code': 200,
