@@ -9,9 +9,10 @@ from django.db.models import F
 
 
 def add_download(request):
-    if request.method == 'POST':
-        type = request.POST.get('type')
-        url = request.POST.get('url')
+    if request.method == 'GET':
+        type = request.GET.get('type')
+        url = request.GET.get('url')
+
     else:
         res = {
             'code': 20000,
