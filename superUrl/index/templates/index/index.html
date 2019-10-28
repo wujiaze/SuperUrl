@@ -10,6 +10,7 @@
     <script src="/static/js/settings.js"></script>
     <script src="/static/js/common.js"></script>
 
+    <script src="/static/js/simple-lightbox.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -171,7 +172,30 @@
         }
     </style>
     <link rel="stylesheet" href="/static/css/music_result.css">
+    <link rel="stylesheet" href="/static/css/simplelightbox.min.css">
+     <style>
+        #dowebok {
+            width: 100%;
+            margin: 10px 0px 10px 10px;
+            font-size: 0;
+        }
 
+        #dowebok a {
+            display: inline-block;
+            width: 150px;
+            height: 150px;
+            margin: 5px;
+        }
+
+        #dowebok .big {
+            width: 300px;
+        }
+
+        #dowebok img {
+            width: 100%;
+            height: 150px;
+        }
+    </style>
 </head>
 
 <body>
@@ -184,7 +208,7 @@
     <div class="right" id="userInfo">
         <div class="not_login" style="display: inline-block;">
             <a href="/v1/user/register">注册</a>
-            <a href="/v1/user/login">登陆</a>
+            <a href="/v1/user/login">登录</a>
         </div>
         <div class="login" style="display: none;">
             <form action="" method="post" enctype="multipart/form-data" id="avatar_form" style="display: none;">
@@ -207,8 +231,9 @@
         <li id="movie">电影</li>
     </ul>
 </div>
-<div id="result_search" style="display: none">
-</div>
+<div id="result_search" style="display: none"></div>
+<div id="dowebok" style="display: none"></div>
+
 <script>
     var current_type = 'music';
     var history_max_count = 10;
@@ -675,7 +700,24 @@
 
     // 显示图片
     function showPicture(pictures) {
-
+        if (pictures == null || pictures.length === 0) {
+            $('#dowebok').css('display', 'none');
+            return
+        } else {
+            $('#dowebok').css('display', 'block');
+        }
+        var html = '';
+        for (let i = 0; i < pictures.length; i++) {
+            if (Math.random() * 2 > 1.5) {
+                html += '<a href="' + pictures[i] + '" >'
+            } else {
+                html += '<a href="' + pictures[i] + '" class="big">'
+            }
+            html += '<img src="' + pictures[i]+ '" alt="" title="图片描述">';
+            html += '</a>'
+        }
+        $('#dowebok').html(html);
+        $('#dowebok a').simpleLightbox();
     }
 
     // 显示电影
