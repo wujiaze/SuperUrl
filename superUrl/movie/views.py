@@ -6,6 +6,7 @@ from history.views import save_history
 # Create your views here.
 import redis
 from movie.models import MovieKeyword, MovieInfomation
+from tools.sort import query_sort
 
 
 def movie(request):
@@ -29,8 +30,10 @@ def movie(request):
         #     return JsonResponse(result)
 
         #如果缓存有数据,返回data
+        keyword_2 = keyword
         if r.exists(keyword):
-            keyword = "info:music:" + keyword
+
+            keyword = "info:movie:" + keyword
             res = r.get(keyword)
             res_list = json.loads(res.decode())
 
@@ -45,7 +48,8 @@ def movie(request):
             try:
                 print('redis不存在')
                 kw = MovieInfomation.objects.get(keyword=keyword)
-                info_list = kw.musicinformation.all()
+                print(kw)
+                info_list = kw.movieInfomation.all()
                 all_list = []
                 for item in info_list:
                     data_dict = {}
@@ -63,6 +67,9 @@ def movie(request):
                     data_dict['url'] = item.url
                     all_list.append(data_dict)
 
+                high = len(all_list) - 1
+                all_list = query_sort(all_list, 0, high)
+
                 str_list = str(json.dumps(all_list))
                 keyword = "info:music:" + keyword
                 r.set(keyword,str_list)
@@ -73,8 +80,6 @@ def movie(request):
                 }
 
                 return JsonResponse(result)
-
-
 
             except Exception as e:
                 print('都不存在')

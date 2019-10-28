@@ -615,7 +615,7 @@
             html += '</div>';
             html += '</li>';
             html += '<li>';
-            html += '<button class="btn">我要评价</button>';
+            html += '<button class="btn" id="btn_commit">我要评价</button>';
             html += '</li>';
             html += '</ul>';
             html += '</li>';
@@ -623,6 +623,12 @@
         // TODO选择起错误
         $('#result_search .left').append(html);
         // todo 绑定事件  点击下载  点击评分
+        $('#btn_commit').on("click",function(){
+             url = $(this).parent().children('a').href
+             console.log(url)
+             console.log(current_type)
+        });
+
 
         if (musics.length === 2) {
             html = '';

@@ -21,7 +21,7 @@
 #               'star_avg': 0,
 #               'url': 'iii'},
 #              ]
-#排序
+
 def query_sort(data_list,low,high):
     if low < high:
         k = sort(data_list,low,high)
