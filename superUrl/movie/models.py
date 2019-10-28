@@ -15,7 +15,7 @@ class MovieInfomation(models.Model):
     star_five = models.IntegerField(default=0, verbose_name='五星数')
     star_avg = models.FloatField(default=0, verbose_name='平均星数')
     create_time=models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
-    update_time=models.DateTimeField(auto_now=True,verbose_name='更新时间')
+    update_time=models.DateTimeField(auto_now_add=True,verbose_name='更新时间')
     url=models.CharField(max_length=1000,verbose_name='电影资源链接')
 
     class Meta:
