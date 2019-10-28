@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from music import views
+from picture import views
 
 urlpatterns = [
     url('^$',views.search_picture),

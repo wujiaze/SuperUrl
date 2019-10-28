@@ -22,7 +22,7 @@ class PictureKeyword(models.Model):
     keyword = models.CharField(max_length=50,null=False,unique=True,verbose_name='关键字')
     create_time = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
 
-    musicinformation = models.ManyToManyField(PictureInformation)
+    pictureinformation = models.ManyToManyField(PictureInformation)
 
     class Meta:
         db_table = 'picture_keyword'
