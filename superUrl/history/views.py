@@ -24,12 +24,18 @@ def get_history(request):
         res_list = []
         for item in history_list:
             res_list.append(item.keyword)
-
-        res = {
-            'code': 200,
-            'data': res_list
-        }
-        return JsonResponse(res)
+        if res_list:
+            res = {
+                'code': 200,
+                'data': res_list
+            }
+            return JsonResponse(res)
+        else:
+            res = {
+                'code': 20000,
+                'error':'暂无历史记录'
+            }
+            return JsonResponse(res)
     return JsonResponse({'code': 20000, 'error': 'not get'})
 
 
