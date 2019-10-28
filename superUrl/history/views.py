@@ -49,10 +49,17 @@ def save_history(request, type):
 
     history_list = user.history_set.all()  # jquery容器
     length = len(history_list)
-    if length > 15:
-        history_list = history_list[length - 15:]
-    for item in history_list:
-        if item.objects.keyword == keyword:
-            item.delete()
-            break
+    if length == 15:
+        for item in history_list:
+            if item.objects.keyword == keyword:
+                item.delete()
+                break
+        else:
+            history_list[0].delete()
+    elif 0 < length < 15:
+        for item in history_list:
+            if item.keyword == keyword:
+                item.delete()
+    elif length == 0:
+        pass
     history = History.objects.create(keyword=keyword, userprofile=user)
