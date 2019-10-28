@@ -56,8 +56,10 @@ def save_history(request, type):
                 break
         else:
             history_list[0].delete()
-    elif length < 15:
+    elif 0 < length < 15:
         for item in history_list:
-            if item.objects.keyword == keyword:
+            if item.keyword == keyword:
                 item.delete()
-        history = History.objects.create(keyword=keyword, userprofile=user)
+    elif length == 0:
+        pass
+    history = History.objects.create(keyword=keyword, userprofile=user)
