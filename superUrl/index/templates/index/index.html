@@ -569,17 +569,21 @@
 
         var count11 = 1;
         var title1 = "搜索结果";
+        console.log(musics.length)
         if (musics.length === 1) {
+            var list1 = musics[0]["music:search"];
+            console.log(list1)
         } else {
             title1 = "新歌榜";
             count11 = 2
+            var list1 = musics[0]["music:new"];
         }
         var title2 = "热歌榜";
 
         $('#result_search').html($(index.music.html(count11, title1, title2)));
 
 
-        var list1 = musics[0]["music:new"];
+        //var list1 = musics[0]["music:new"];
         var html = '';
         for (let i = 0; i < list1.length; i++) {
             html += '<li class="music_item">';

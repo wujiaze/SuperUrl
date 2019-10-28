@@ -33,7 +33,8 @@ def search_music(request):
 
             res = {
                 'code': 200,
-                'data': [{'music:search':res_list}]
+                'data': [{'music:search':res_list}],
+                'type':'music',
             }
 
             return JsonResponse(res)
@@ -47,6 +48,7 @@ def search_music(request):
                 for item in info_list:
                     data_dict = {}
                     data_dict['name'] = item.name
+                    data_dict['star'] = item.star
                     data_dict['download_count'] = item.download_count
                     data_dict['star_one'] = item.star_one
                     data_dict['star_two'] = item.star_two
@@ -65,7 +67,8 @@ def search_music(request):
 
                 result = {
                     'code': 200,
-                    'data': [{'music:search':all_list}]
+                    'data': [{'music:search':all_list}],
+                    'type':'music'
                 }
 
                 return JsonResponse(result)
