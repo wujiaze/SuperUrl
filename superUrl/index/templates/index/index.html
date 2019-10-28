@@ -8,6 +8,8 @@
     <title>资源助手 - 为您提供快捷高效的服务</title>
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/settings.js"></script>
+    <script src="/static/js/common.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -35,14 +37,14 @@
             margin-right: 10px;
         }
 
-        #top_search .left {
+        #top_search > .left {
             width: 800px;
             height: 43px;
             font-size: 0;
             display: inline-block;
         }
 
-        #top_search .left input {
+        #top_search > .left > input {
             width: 664px;
             height: 43px;
             border: #999999 solid 0.8px;
@@ -52,7 +54,7 @@
             font-size: 20px;
         }
 
-        #top_search .left button {
+        #top_search > .left > button {
             width: 125px;
             height: 45px;
             border: none;
@@ -70,7 +72,7 @@
             background-color: white;
         }
 
-        #keylist li {
+        #keylist > li {
             width: 663px;
             padding-left: 10px;
             height: 30px;
@@ -79,12 +81,12 @@
             font-size: 18px;
         }
 
-        #keylist li:hover {
+        #keylist > li:hover {
             background-color: #f0f0f0;
         }
 
 
-        #top_search .right {
+        #top_search > .right {
             height: 45px;
 
             font-size: 18px;
@@ -93,7 +95,7 @@
             right: 0px;
         }
 
-        #top_search .right .not_login a {
+        #top_search > .right .not_login a {
             margin-right: 30px;
             font-size: 18px;
             color: #000;
@@ -103,34 +105,34 @@
         }
 
 
-        #top_search .right .not_login a:hover {
+        #top_search > .right .not_login a:hover {
             color: blue;
         }
 
-        #top_search .right .login img {
+        #top_search > .right .login img {
             vertical-align: bottom;
             height: 45px;
             margin-left: 20px;
         }
 
-        #top_search .right .login img:hover {
+        #top_search > .right .login img:hover {
             cursor: pointer;
         }
 
-        #top_search .right .login span {
+        #top_search > .right .login span {
             margin-left: 10px;
             font-size: 18px;
             line-height: 45px;
         }
 
-        #top_search .right .login button {
+        #top_search > .right .login button {
             margin: 0px 30px;
             border-style: none;
             font-size: 16px;
             background-color: white;
         }
 
-        #top_search .right .login button:hover {
+        #top_search > .right .login button:hover {
             cursor: pointer;
             color: blue;
         }
@@ -168,6 +170,8 @@
             font-weight: 600;
         }
     </style>
+    <link rel="stylesheet" href="/static/css/music_result.css">
+
 </head>
 
 <body>
@@ -202,6 +206,8 @@
         <li id="picture">图片</li>
         <li id="movie">电影</li>
     </ul>
+</div>
+<div id="result_search" style="display: none">
 </div>
 <script>
     var current_type = 'music';
@@ -458,11 +464,12 @@
                 // 显示在框中
                 var txt = $(this).text();
                 if (txt.length > 30) {
-                    var fin = txt.substring(0, 26) + "..."
+                    txt = txt.substring(0, 26) + "..."
                 }
-                $('#inp_search').val(fin);
+
+                $('#inp_search').val(txt);
                 // 搜索
-                {#search()#}
+                search()
             });
         });
     }
@@ -497,6 +504,7 @@
 
     // 搜索具体内容
     function search() {
+        $('#result_search').css('display', 'none');
         var inp = $('#inp_search').val();
         var url = '';
         if (inp == null || inp === "") {
@@ -541,14 +549,139 @@
                             break;
                     }
                 } else {
-                    $('#show').css('display', 'none');
+                    $('#result_search').css('display', 'none');
                     {#alert(result.error)#}
                 }
             }
         });
     }
 
+    // 显示音乐
+    function showMusic(musics) {
+        var html = '';
+        if (musics == null || musics.length === 0) {
+            $('#result_search').html(html);
+            $('#result_search').css('display', 'none');
+            return
+        }
+        $('#result_search').css('display', 'block');
 
+
+        var count11 = 1;
+        var title1 = "搜索结果";
+        if (musics.length === 1) {
+        } else {
+            title1 = "新歌榜";
+            count11 = 2
+        }
+        var title2 = "热歌榜";
+
+        $('#result_search').html($(index.music.html(count11, title1, title2)));
+
+
+        var list1 = musics[0]["music:new"];
+        var html = '';
+        for (let i = 0; i < list1.length; i++) {
+            html += '<li class="music_item">';
+            html += '<ul>';
+            html += '<li>' + Number(i + 1) + '</li>';
+            html += '<li><a href="' + list1[i]["url"] + '">' + list1[i]["name"] + '</a></li>';
+            html += '<li>' + list1[i]["star"] + '</li>';
+            var tim = list1[i]["time"];
+            if (tim === undefined || tim == null)
+                tim = "00:00";
+            html += '<li>' + tim + '</li>';
+            html += '<li>';
+            html += '<div class="score">';
+            html += ' <div>';
+            html += '<span>' + list1[i]["star_avg"] + '</span>';
+            var num1 = Math.ceil(list1[i]['star_avg']);
+            for (let j = 0; j < num1; j++) {
+                html += '<img src="/static/image/亮星.png" alt="">';
+            }
+            for (let m = 0; m < 5 - num1; m++) {
+                html += '<img src="/static/image/空星.png" alt="">';
+            }
+            html += '</div>';
+            html += '<div>';
+            var count1 = Number(list1[i]["star_one"]) +
+                Number(list1[i]["star_two"]) +
+                Number(list1[i]["star_three"]) +
+                Number(list1[i]["star_four"]) +
+                Number(list1[i]["star_five"]);
+            html += '<span class="second_last">' + count1 + '个评分</span>';
+            html += '<span class="last">' + list1[i]["download_count"] + '个下载</span>';
+            html += '</div>';
+            html += '</div>';
+            html += '</li>';
+            html += '<li>';
+            html += '<button class="btn">我要评价</button>';
+            html += '</li>';
+            html += '</ul>';
+            html += '</li>';
+        }
+        // TODO选择起错误
+        $('#result_search .left').append(html);
+        // todo 绑定事件  点击下载  点击评分
+
+        if (musics.length === 2) {
+            html = '';
+            list1 = musics[1]["music:hot"];
+            for (let i = 0; i < list1.length; i++) {
+                html += '<li class="music_item">';
+                html += '<ul>';
+                html += '<li>' + Number(i + 1) + '</li>';
+                html += '<li><a href="' + list1[i]["url"] + '">' + list1[i]["name"] + '</a></li>';
+                html += '<li>' + list1[i]["star"] + '</li>';
+                var tim = list1[i]["time"];
+                if (tim === undefined || tim == null)
+                    tim = "00:00";
+                html += '<li>' + tim + '</li>';
+                html += '<li>';
+                html += '<div class="score">';
+                html += ' <div>';
+                html += '<span>' + list1[i]["star_avg"] + '</span>';
+                var num1 = Math.ceil(list1[i]['star_avg']);
+                for (let j = 0; j < num1; j++) {
+                    html += '<img src="/static/image/亮星.png" alt="">';
+                }
+                for (let m = 0; m < 5 - num1; m++) {
+                    html += '<img src="/static/image/空星.png" alt="">';
+                }
+                html += '</div>';
+                html += '<div>';
+                var count1 = Number(list1[i]["star_one"]) +
+                    Number(list1[i]["star_two"]) +
+                    Number(list1[i]["star_three"]) +
+                    Number(list1[i]["star_four"]) +
+                    Number(list1[i]["star_five"]);
+                html += '<span class="second_last">' + count1 + '个评分</span>';
+                html += '<span class="last">' + list1[i]["download_count"] + '个下载</span>';
+                html += '</div>';
+                html += '</div>';
+                html += '</li>';
+                html += '<li>';
+                html += '<button class="btn">我要评价</button>';
+                html += '</li>';
+                html += '</ul>';
+                html += '</li>';
+            }
+            $('#result_search .right').append(html)
+        }
+
+        {#$('head').append($('<link rel="stylesheet" href="/static/css/music_result.css">'))#}
+        // todo 绑定事件  点击下载  点击评分
+    }
+
+    // 显示图片
+    function showPicture(pictures) {
+
+    }
+
+    // 显示电影
+    function showMovie(movies) {
+
+    }
 </script>
 </body>
 </html>

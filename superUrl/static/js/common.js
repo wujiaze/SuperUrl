@@ -69,3 +69,39 @@ index.search_option = {
         return HTML
     }
 };
+
+index.music = {
+    html: function (index, title1, title2) {
+        var HTML = '';
+        HTML += '<ul id="left_first" class="left">';
+        HTML += '<div id="left_first_title" style="font-size: 30px; color: red;">' + title1 + '</div>';
+        HTML += '<li class="music_title">';
+        HTML += '<ul>';
+        HTML += '<li>序号</li>';
+        HTML += '<li>歌曲</li>';
+        HTML += '<li>歌手</li>';
+        HTML += '<li>时长</li>';
+        HTML += '<li>评分</li>';
+        HTML += '<li>评论</li>';
+        HTML += '</ul>';
+        HTML += '</li>';
+        HTML += '</ul>';
+        if (index >= 2) {
+            HTML += '<ul id="left_first" class="right">';
+            HTML += '<div id="left_first_title" style="font-size: 30px; color:#31c27c;">' + title2 + '</div>';
+            HTML += '<li class="music_title">';
+            HTML += '<ul>';
+            HTML += '<li>序号</li>';
+            HTML += '<li>歌曲</li>';
+            HTML += '<li>歌手</li>';
+            HTML += '<li>时长</li>';
+            HTML += '<li>评分</li>';
+            HTML += '<li>评论</li>';
+            HTML += '</ul>';
+            HTML += '</li>';
+            HTML += '</ul>';
+        }
+        HTML += 'return HTML';
+        return HTML
+    }
+};
