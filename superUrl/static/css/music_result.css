@@ -1,0 +1,161 @@
+ ul {
+            list-style: none;
+        }
+
+        #left_first {
+            /* border: solid 1px red; */
+            width: 750px;
+            margin: 30px 0px 0px 150px;
+            font-size: 14px;
+            overflow: hidden;
+            background-color: #f9f8f9;
+            text-align: center;
+        }
+
+        #left_first>li {
+            width: 750px;
+            height: 50px;
+            /* border: 1px red solid; */
+            background-color: #f9f8f9;
+            line-height: 70px;
+            margin-bottom: 10px;
+        }
+
+        /* #left_first>li:nth-of-type(1) {
+            height: 50px;
+            line-height: 50px;
+        } */
+
+        #left_first>li>ul {
+            height: 50px;
+        }
+
+        /* #left_first>li:nth-of-type(1)>ul {
+            height: 50px;
+        } */
+
+        #left_first>li>ul>li {
+            float: left;
+            height: 50px;
+            /* border: solid 1px red; */
+        }
+
+        /* #left_first>li:nth-of-type(1)>ul>li {
+            height: 50px;
+        } */
+
+        #left_first>li>ul>li:nth-of-type(1) {
+            width: 50px;
+        }
+
+        #left_first>li>ul>li:nth-of-type(2) {
+            width: 238px;
+        }
+
+        #left_first>li>ul>li:nth-of-type(3) {
+            width: 100px;
+        }
+
+        #left_first>li>ul>li:nth-of-type(4) {
+            width: 70px;
+        }
+
+        #left_first>li>ul>li:nth-of-type(5) {
+            width: 210px;
+        }
+
+        #left_first>li>ul>li:nth-of-type(6) {
+            width: 70px;
+        }
+
+
+        /*#music_items {
+            border: solid 1px red;
+            overflow: hidden;
+            width: 750px;
+            margin: 0px 0px 0px 100px;
+        }
+
+        #music_items .music_item {
+            height: 35px;
+            border: 1px solid red;
+        }
+
+        #music_items .music_item .music_info {
+            height: 35px;
+            border: solid 1px red;
+        }
+
+        #music_items .music_item .music_info li {
+            border: solid 1px red;
+            height: 35px;
+            line-height: 35px;
+            float: left;
+            width: 150px;
+            background-color: #f9f8f9;
+            text-align: center;
+        } */
+
+        #result_search .score {
+            /* border: red 1px solid; */
+            width: 210px;
+            height: 50px;
+        }
+
+        #result_search .score div:nth-of-type(1) {
+            height: 25px;
+        }
+
+        #result_search .score div:nth-of-type(2) {
+            height: 25px;
+        }
+
+        #result_search .score>div span {
+            height: 25px;
+            line-height: 25px;
+            margin-right: 3px;
+            vertical-align: top;
+        }
+
+        #result_search .score img {
+            height: 25px;
+            width: 25px;
+            margin: 0px 0px 0px 5px;
+            vertical-align: top;
+        }
+
+        #result_search .score .second_last {
+            float: left;
+            padding-left: 10px;
+        }
+
+        #result_search .score .last {
+            float: right;
+        }
+
+        #left_first .music_item li:last-child .btn {
+            margin-left: 10px;
+            margin-top: -3px;
+            border: none;
+            background-color: #4490f7;
+            width: 70px;
+            height: 50px;
+            vertical-align: top;
+            border-radius: 10px;
+            ;
+            color: white;
+        }
+
+        #result_search {
+            /* border: solid 1px red; */
+            width: 1800px;
+            overflow: hidden;
+        }
+
+        #result_search .left {
+            float: left;
+        }
+
+        #result_search .right {
+            float: right;
+        }
