@@ -24,8 +24,12 @@ class MaoyanSpider:
         }
         # print(url)
         html = requests.get(url=url,headers=headers).json()
+
         # print(html)
-        res = html['movies']['list']
+        try:
+            res = html['movies']['list']
+        except:
+            return None
 
         # print(res)
         res_list = []
