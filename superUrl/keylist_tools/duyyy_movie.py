@@ -5,9 +5,9 @@ import json
 from keylist_tools.random_useragents import ua_list
 
 
-class MaoyanSpider:
+class DutttSpider:
     def __init__(self):
-        self.url = 'https://maoyan.com/ajax/suggest?kw={}'
+        self.url = 'https://www.duyyy.com/index.php?m=search&a=api&wd={}'
 
     def get_html(self,url):
         # print('get_html')
@@ -25,13 +25,13 @@ class MaoyanSpider:
         # print(url)
         html = requests.get(url=url,headers=headers).json()
         # print(html)
-        res = html['movies']['list']
+        res = html['data']
 
         # print(res)
         res_list = []
         for item in res:
             # print(item)
-            res_list.append(item['nm'])
+            res_list.append(item['vod_name'])
         return res_list
 
 
@@ -45,6 +45,6 @@ class MaoyanSpider:
         return res
 
 if __name__ == '__main__':
-    spider = MaoyanSpider()
+    spider = DutttSpider()
     result = spider.run('人')
     # print(result)

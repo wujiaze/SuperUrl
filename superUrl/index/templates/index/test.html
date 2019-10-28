@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="你身边的资源助手"/>
+    <meta name="description" content="图片/音乐/电影搜索"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资源助手 - 为您提供快捷高效的服务</title>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/settings.js"></script>
+    <link rel="stylesheet" href="/static/css/nav.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        #inp_search {
+            width: 200px;
+            height: 30px;
+        }
+
+        #bdsug {
+            width: 200px;
+            border: solid 1px rgba(80, 80, 80, 0.3);
+            margin: 0;
+            padding: 0;
+            position: absolute;
+        }
+
+        #bdsug ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        #bdsug ul li {
+            height: 30px;
+            line-height: 30px;
+            background-color: #fff;
+        }
+
+        #bdsug ul li:hover {
+            background-color: #f0f0f0;
+        }
+
+        #show {
+            border: solid 1px rgba(80, 80, 80, 0.3);
+            width: 400px;
+            height: auto;
+        }
+
+        .item {
+            overflow: auto;
+            margin-bottom: 5px;
+            padding: 5px;
+            border-bottom: solid 1px rgba(80, 80, 80, 0.3);
+        }
+
+        .left {
+            float: left;
+        }
+
+        .right {
+            float: right;
+        }
+
+        #bottom {
+            position: fixed;
+            bottom: 10px;
+            margin: 0 auto;
+        }
+
+
+        #avatar_form {
+            position: relative;
+            width: 340px
+        }
+
+        #avatar_form input {
+            vertical-align: middle;
+            margin: 0;
+            padding: 0
+        }
+
+        #avatar_form .txt {
+            height: 22px;
+            border: 1px solid #cdcdcd;
+            width: 180px;
+        }
+
+        #avatar_form .btn {
+            background-color: #FFF;
+            border: 1px solid #CDCDCD;
+            height: 24px;
+            width: 70px;
+        }
+
+        #avatar_form .file {
+            position: absolute;
+            top: 0;
+            right: 80px;
+            height: 24px;
+            filter: alpha(opacity:0);
+            opacity: 0;
+            width: 260px
+        }
+    </style>
+
+</head>
+
+<body style="background-color:#f0f0f0;">
+{#<div id="top">#}
+{#    <img src="/static/image/search.jpeg">#}
+{#    <input type="text" name="kw" id="inp_search" placeholder="歌曲名或专辑名进行搜索" autocomplete="off">#}
+{#    <button id="btn_search" type="button">搜索</button>#}
+{#    <button id="btn_register" type="button">注册</button>#}
+{#    <button id="btn_login" type="button">登录</button>#}
+{#</div>#}
+
+
+<div class="container">
+
+    <div id="userInfo">
+        <div class="not_login" style="display: block">
+            <button class="btn btn-default" id="btn_register" type="button">注册</button>
+            <button class="btn btn-default" id="btn_login" type="button">登录</button>
+        </div>
+        <div class="login" style="display: none">
+            <img src="/static/image/getAvatar.jpg" class="avatar" style="cursor: pointer;" id="avatar" width="50"
+                 height="50">
+            <div class="file-box" id="avatar_form" style="display: none">
+                <form action="" method="post" enctype="multipart/form-data">
+                    <input type='text' name='textfield' id='textfield' class='txt'/>
+                    <input type='button' class='btn' value='浏览...'/>
+                    <input type="file" name="fileField" class="file" id="fileField" size="28"
+                           onchange="document.getElementById('textfield').value=this.value"/>
+                    <input type="button" id="avatar_btn" class="btn" value="上传"/>
+                </form>
+            </div>
+
+            亲,你好!<span></span>
+            <button id="logout" type="button">注销</button>
+        </div>
+    </div>
+
+    <form class="form-horizontal" method="get" id="search" role="form">
+        <div class="input-group">
+            <input type="text" name="kw" id="inp_search" placeholder="歌曲名或专辑名进行搜索" class="form-control" value=""
+                   autocomplete="off">
+            <button class="btn btn-default" id="btn_search" type="button">搜索</button>
+            <div id="bdsug" style="display: none;">
+                <ul>
+                    {#   <li data-key="" class="bdsug-store bdsug-overflow"><span>sdfasdf</span></li>#}
+                </ul>
+            </div>
+        </div>
+    </form>
+
+    <div>
+        <label for="">类别</label>
+        <input type="radio" name="type" id="music" checked>音乐
+        <input type="radio" name="type" id="movie">电影
+        <input type="radio" name="type" id="picture">图片
+    </div>
+    <div id="show">
+        {#        <div class="item">#}
+        {#            <div class="left">#}
+        {#                <a href="">你好</a>#}
+        {#                <p>#}
+        {#                    <span>歌手: xxx</span>#}
+        {#                    <span>时长：xxx</span>#}
+        {#                    <span>下载:xxx</span>#}
+        {#                </p>#}
+        {#            </div>#}
+        {#            <div class="right">#}
+        {#                <p>#}
+        {#                    <span>评星</span>#}
+        {#                    <img src="/static/image/空星.png">#}
+        {#                    <img src="/static/image/空星.png">#}
+        {#                    <img src="/static/image/空星.png">#}
+        {#                    <img src="/static/image/空星.png">#}
+        {#                    <img src="/static/image/空星.png">#}
+        {#                </p>#}
+        {#                <p>#}
+        {#                    <span>xx</span>个评分#}
+        {#                    <button>评分</button>#}
+        {#                </p>#}
+        {#            </div>#}
+        {#        </div>#}
+    </div>
+
+    <p id="bottom">本站不存储任何音频文件，数据来自各网站接口，仅供个人学习、研究或者欣赏</p>
+
+</div>
+<script>
+    get_information();
+
+    // 获取信息
+    function get_information() {
+        var token = window.localStorage.getItem('superUrl_token');
+        if (token == null) {
+            $('#userInfo>.not_login').css('display', 'block');
+            $('#userInfo>.login').css('display', 'none');
+            return
+        }
+        $.ajax({
+            type: 'get',
+            contentType: "application/json",
+            dataType: "json",
+            url: settings_url + 'user/information',
+            beforeSend: function (request) {
+                request.setRequestHeader("Authorization", token);
+            },
+            success: function (response) {
+                if (response.code === 200) {
+                    if (response.data.avatar === "") {
+                        response.data.avatar = "/static/image/getAvatar.jpg"
+                    }
+                    $('#userInfo>.not_login').css('display', 'none');
+                    $('#userInfo>.login').css('display', 'block');
+                    $('#userInfo>.login').children('img').attr('src', response.data.avatar);
+                    $('#userInfo>.login').children('span').text(response.data.nickname)
+                } else {
+                    $('#userInfo>.login').css('display', 'none');
+                    $('#userInfo>.not_login').css('display', 'block');
+                }
+            }
+        })
+    }
+
+    // 注册
+    $('#btn_register').on('click', function () {
+        window.location.href = '/v1/user/register'
+    });
+    // 登录
+    $('#btn_login').on('click', function () {
+        window.location.href = '/v1/user/login'
+    });
+    // 登出
+    $('#logout').on('click', function () {
+            if (confirm("确定登出吗？")) {
+                window.localStorage.removeItem('superUrl_token');
+                window.localStorage.removeItem('superUrl_user');
+                window.location.href = '/v1/index';
+            }
+        }
+    );
+    // 点击头像
+    $('#avatar').on('click', function () {
+        var type = $('#avatar_form').css('display');
+        if (type === 'block') {
+            $('#avatar_form').css('display', 'none')
+        } else {
+            $('#avatar_form').css('display', 'block')
+        }
+    });
+    // 上传头像
+    $('#avatar_btn').on('click', function () {
+        var token = window.localStorage.getItem('superUrl_token');
+        var url = settings_url + 'user/avatar';
+        formdata = new FormData();
+        formdata.append("avatar", $("#fileField")[0].files[0]);
+        $.ajax({
+            processData: false,
+            contentType: false,
+            url: url,
+            type: 'post',
+            data: formdata,
+            beforeSend: function (request) {
+                request.setRequestHeader("Authorization", token);
+            },
+            success: function (arg) {
+                if (arg.code === 200) {
+                    alert('成功！');
+                    window.location.reload()
+                } else {
+                    alert(arg.error)
+                }
+            }
+        });
+        {#$('#avatar_form').css('display', 'none')#}
+    });
+
+
+    var current_type = 'music';
+    $('#btn_search').on('click', function () {
+        // 根据当前类型，内容搜索
+        var inp = $('#inp_search').val();
+        if (inp != null && inp !== '') {
+            search();
+            // 保存历史记录
+            storeHistory();
+        }
+    });
+    $('#music').on('click', function () {
+        // 切换到music
+        if (current_type !== 'music') {
+            current_type = 'music';
+            search();
+            storeHistory();
+        }
+        $('#inp_search').attr('placeholder', '歌曲名或专辑名进行搜索')
+    });
+    $('#movie').on('click', function () {
+        // 切换到电影
+        if (current_type !== 'movie') {
+            current_type = 'movie';
+            // 搜索电影
+            search();
+            storeHistory();
+        }
+        $('#inp_search').attr('placeholder', '电影名进行搜索')
+    });
+    $('#picture').on('click', function () {
+        // 切换到picture
+        if (current_type !== 'picture') {
+            // 搜索picture
+            current_type = 'picture';
+            search();
+            storeHistory();
+        }
+        $('#inp_search').attr('placeholder', '关键字进行搜索')
+    });
+
+    $('#inp_search').on('input', function () {
+        // 关键字改变，获取实时关键字
+        window.setTimeout(search_keyword, 500);
+        {#search_keyword()#}
+    });
+
+    $('#inp_search').on('focusin', function () {
+        console.log(11)
+        if ($('#inp_search').val() === "") {
+            // 显示历史记录
+            getHistory();
+        } else {
+            // 根据当前关键字的实时关键字信息
+            search_keyword();
+        }
+        $('#bdsug').stop(true, true).css('display', 'block');
+    });
+
+    $('#inp_search').on('focusout', function () {
+        $('#bdsug').stop(true, true).slideUp(300);
+    });
+
+
+    // 搜索具体内容
+    function search() {
+        var inp = $('#inp_search').val();
+        // 发送消息
+        var data = {
+            keyword: inp,
+            type: current_type
+        };
+        var url = '';
+        if (inp == null || inp === "") {
+            url = settings_url + 'rank_keylist/rank'
+        } else {
+            url = settings_url + current_type;
+        }
+        var token = window.localStorage.getItem('superUrl_token');
+        $.ajax({
+            type: 'get',
+            contentType: "application/json",
+            dataType: "json",
+            url: url,
+            data: data,
+            beforeSend: function (request) {
+                request.setRequestHeader("Authorization", token);
+            },
+            success: function (result, status, xhr) {
+                console.log(result);
+                if (result.code === 200) {
+                    $('#show').css('display', 'block');
+                    switch (result.type) {
+                        case 'music':
+                            // [{new:[]},{hot:[]}]
+                            // [{search:[]}]
+                            showMusic(result.data);
+                            break;
+                        case 'movie':
+                            showMovie(result.data);
+                            break;
+                        case 'picture':
+                            showPicture(result.data);
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    $('#show').css('display', 'none');
+                    {#alert(result.error)#}
+                }
+            }
+        });
+    }
+
+    // 根据输入值，获取关键字列表
+    function search_keyword() {
+        var inp = $('#inp_search').val();
+        if (inp == null || inp === '') {
+            console.log("sss")
+            showContent(getHistory());
+            return
+        }
+        var data = {
+            type: current_type,
+            kw: inp,
+        };
+        $.ajax({
+            type: 'get',
+            contentType: "application/json",
+            dataType: "json",
+            url: settings_url + 'rank_keylist/keylist',
+            data: data,
+            success: function (result) {
+                if (result.code === 200) {
+                    showContent(result.data)
+                } else {
+                    showContent(null)
+                }
+            }
+        });
+    }
+
+
+    var history_max_count = 10;
+
+    // 保存本地历史
+    function storeHistory() {
+        if ($('#inp_search').val() !== "") {
+            var current_history_index = window.localStorage.getItem('current_history_index');
+            if (current_history_index == null) {
+                current_history_index = 1
+            }
+            flag = true;
+            for (let index = 1; index <= history_max_count; index++) {
+                if ($('#inp_search').val() === window.localStorage.getItem('history' + index)) {
+                    flag = false;
+                    break
+                }
+            }
+            if (flag === true) {
+                window.localStorage.setItem('history' + current_history_index, $('#inp_search').val());
+                current_history_index = Number(current_history_index) + 1;
+                if (current_history_index > history_max_count) {
+                    current_history_index = 1
+                }
+            }
+            window.localStorage.setItem('current_history_index', current_history_index);
+        }
+    }
+
+    // 获取历史
+    function getHistory() {
+        var token = window.localStorage.getItem('superUrl_token');
+        var phonenumber = window.localStorage.getItem('superUrl_user');
+        if (token == null) {
+            // 本地获取
+            var history = [];
+            var current_history_index = window.localStorage.getItem('current_history_index');
+            for (let index = 1; index <= history_max_count; index++) {
+                item = window.localStorage.getItem('history' + index);
+                {#console.log(item);#}
+                if (item != null) {
+                    if (current_history_index - 1 >= index) {
+                        history[current_history_index - 1 - index] = item
+                    } else {
+                        history[current_history_index - 1 - index + history_max_count] = item
+                    }
+                }
+            }
+            showContent(history);
+        } else {
+            // 网络获取
+            var data = {
+                phonenumber: phonenumber
+            };
+            $.ajax({
+                type: 'get',
+                contentType: "application/json",
+                dataType: "json",
+                url: settings_url + 'history',
+                data: data,
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", token);
+                },
+                success: function (request) {
+                    if (request.code === 200) {
+                        console.log(request.data);
+                        showContent(request.data);
+                    } else {
+                        console.log(request.error);
+
+                    }
+                }
+            });
+        }
+    }
+
+    // 显示内容
+    function showContent(content) {
+        var html1 = '';
+        if (content == null || content.length === 0) {
+
+        } else {
+            for (let index = 0; index < content.length; index++) {
+                if (content[index] !== undefined && content[index] != null && content[index] !== '')
+                    html1 += '<li data-key="" class="bdsug-store bdsug-overflow"><span>' + content[index] + '</span></li>';
+            }
+        }
+        $('#bdsug>ul').html(html1);
+        // 对 元素 进行绑定
+        $('#bdsug>ul li').each(function (event) {
+            $(this).on('click', function () {
+                // 显示在框中
+                $('#inp_search').val($(this).children('span').text());
+                // 搜索
+                search()
+            });
+        });
+    }
+
+    // 显示音乐
+    function showMusic(musics) {
+        var html = '';
+
+        if (musics == null || musics.length === 0) {
+            return
+        }
+
+        for (let index = 0; index < musics.length; index++) {
+            {#if(musics[index])#}
+
+
+            console.log(musics[index]);
+            html += '<div class="item">';
+            html += '<div class="left">';
+            html += '<a href="' + musics[index]['url'] + '">' + musics[index]['name'] + '</a>';
+            html += '<p>';
+            html += '<span> 歌手:  ' + musics[index]['star'] + ' < /span>';
+            html += '<span> 下载: ' + musics[index]['downloads_count'] + ' < /span> ';
+            html += '</p>';
+            html += '</div>';
+            html += '<div class="right">';
+            html += '<p>';
+            html += '<span>评星</span>';
+            var level = Math.ceil(musics[index]['level']);
+            for (let j = 0; j < 5; j++) {
+                if (j < level) {
+                    html += '<img src="/static/image/空星.png">';
+                } else {
+                    html += '<img src="/static/image/亮星.png">';
+                }
+            }
+            html += '</p>';
+            html += '<p>';
+            html += '<span>' + musics['commit_count'] + '</span>个评分';
+            html += '<button>评分</button>';
+            html += '</p>';
+            html += '</div>';
+            html += '</div>';
+        }
+        $('#show').html(html)
+        // todo 绑定事件  点击下载  点击评分
+    }
+
+
+    // 显示电影
+    function showMovie(movies) {
+        var html = '';
+        for (let index = 0; index < movies.length; index++) {
+            html += '<div class="item">';
+            html += '<div class="left">';
+            html += '<a href="' + movies['url'] + '">' + movies['name'] + '</a>';
+            html += '<p>';
+            html += '<span> 主演:  ' + movies['star'] + ' < /span>';
+            html += '<span> 导演:  ' + movies['director'] + ' < /span>';
+            html += '<span> 下载: ' + movies['downloads_count'] + ' < /span> ';
+            html += '</p>';
+            html += '</div>';
+            html += '<div class="right">';
+            html += '<p>';
+            html += '<span>评星</span>';
+            var level = Math.ceil(movies['level']);
+            for (let j = 0; j < 5; j++) {
+                if (j < level) {
+                    html += '<img src="/static/image/空星.png">';
+                } else {
+                    html += '<img src="/static/image/亮星.png">';
+                }
+            }
+            html += '</p>';
+            html += '<p>';
+            html += '<span>' + movies['commit_count'] + '</span>个评分';
+            html += '<button>评分</button>';
+            html += '</p>';
+            html += '</div>';
+            html += '</div>';
+        }
+        $('#show').html(html)
+    }
+
+    // 显示图片
+    function showPicture(pictures) {
+
+    }
+
+</script>
+
+</body>
+
+</html>

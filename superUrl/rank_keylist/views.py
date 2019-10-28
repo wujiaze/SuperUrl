@@ -6,7 +6,7 @@ from django.shortcuts import render
 from keylist_tools.tuchong import TuChongSpider
 from keylist_tools.wangyi import QQYinyueSpider
 from keylist_tools.maoyan import MaoyanSpider
-
+from keylist_tools.duyyy_movie import DutttSpider
 
 # Create your views here.
 
@@ -18,7 +18,7 @@ def get_keylist(request):
     keyword_2 = keyword
     r = redis.Redis(host='127.0.0.1', port=6379, db=1)
     keyword = type_search + ':keylist:' + keyword
-
+    keep_time = 60 * 60 * 24
     if r.exists(keyword):
         res = r.get(keyword)
         print(type(res.decode()))
@@ -36,22 +36,38 @@ def get_keylist(request):
 
         if type_search == 'picture':
             keylist = TuChongSpider().run(keyword_2)
-            keylist = list(set(keylist))
+            if keylist:
+                keylist = list(set(keylist))
         elif type_search == 'music':
             # print(keyword)
             keylist = QQYinyueSpider().run(keyword_2)
-            keylist = list(set(keylist))
+            if keylist:
+                keylist = list(set(keylist))
             # print(keylist)
         elif type_search == 'movie':
             # print('join get music')
+            # keylist = MaoyanSpider().run(keyword_2)
             keylist = MaoyanSpider().run(keyword_2)
-            keylist = list(set(keylist))
+            if keylist:
+                keylist = list(set(keylist))
+
         else:
             res = {
                 'code':20000,
                 'error':'暂无数据'
             }
             return JsonResponse(res)
+
+        if not keylist:
+            res = {
+                'code': 20000,
+                'error': '暂无数据'
+            }
+            return JsonResponse(res)
+
+        res = json.dumps(keylist)
+        r.set(keyword, res)
+        r.expire(keyword, keep_time)
 
         if keyword:
             res = {

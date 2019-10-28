@@ -15,24 +15,28 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.views.generic import RedirectView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # http://127.0.0.1:8000/v1/movie
-    url(r'^v1/movie', include('movie.urls')),
+    url(r'^favicon.ico$', RedirectView.as_view(url=r'static/image/favicon.ico')),
+    url(r'^', include('index.urls')),
     url(r'^v1/index', include('index.urls')),
     url(r'^v1/user', include('user.urls')),
-    url(r'^v1/btoken',include('btoken.urls')),
-    url(r'^v1/music',include('music.urls')),
-    url(r'^v1/comment',include('comment.urls')),
-    url(r'^v1/history',include('history.urls')),
-    url(r'^v1/download',include('download.urls')),
-    url(r'^v1/rank_keylist',include('rank_keylist.urls'))
+    url(r'^v1/btoken', include('btoken.urls')),
+    url(r'^v1/movie', include('movie.urls')),
+    url(r'^v1/music', include('music.urls')),
+    url(r'^v1/comment', include('comment.urls')),
+    url(r'^v1/history', include('history.urls')),
+    url(r'^v1/download', include('download.urls')),
+    url(r'^v1/rank_keylist', include('rank_keylist.urls'))
 
 ]
 
 from django.conf.urls.static import static
 from django.conf import settings
+
 # 将访问路径 映射到 存储路径
 # 同时相当于创建了一个路由
 # r'^media/'
