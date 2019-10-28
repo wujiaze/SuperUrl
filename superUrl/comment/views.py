@@ -1,9 +1,11 @@
 from django.shortcuts import render
-
+from django.db.models import F
 from comment.models import Comment
+from movie.models import MovieInfomation
 from tools.logincheck import login_check
 from django.http import JsonResponse
 import json
+
 # Create your views here.
 from user.models import UserProfile
 
@@ -36,6 +38,59 @@ def get_comment(request):
             return JsonResponse(result)
 
 
+
+        # 获取评论星级　如果低于某值　则删除资源，　高于则继续插入
+        star_val = json_obj.get('num', '')
+        star_val = int(star_val)
+        if not star_val:
+            result = {'code': 20000, 'data': 'error'}
+            return JsonResponse(result)
+        try:
+            movie = MovieInfomation.objects.get(url=url)
+            if star_val == 1:
+                movie.update(star_one=F('movie.star_one') + 1)
+                movie.save()
+            elif star_val == 2:
+                movie.update(star_two=F('movie.star_two') + 1)
+                movie.save()
+            elif star_val == 3:
+                movie.update(star_three=F('movie.star_three') + 1)
+                movie.save()
+            elif star_val == 4:
+                movie.update(star_four=F('movie.star_four') + 1)
+                movie.save()
+            elif star_val == 5:
+                movie.update(star_five=F('movie.star_five') + 1)
+                movie.save()
+
+            all_star = movie.star_one + movie.star_two + movie.star_three + movie.star_four + movie.star_five
+            avg_star = all_star / 5
+
+
+            # 判断平均星数
+            if avg_star < 1.5:
+                #删除表记录
+                try:
+                    movie.delete()
+                except Exception as e:
+                    print(e)
+                    result = {'code': 20000, 'data': 'error'}
+                    return JsonResponse(result)
+
+
+
+            #修改平均星值
+            movie.avg_star=avg_star
+            movie.save()
+
+
+        except Exception as e:
+            print('没找到字段')
+            result = {'code': 20000, 'data': 'error'}
+            return JsonResponse(result)
+
+
+        #插入评论表
         try:
 
             Comment.objects.create(url=url,content=content,username=user.phonenumber)
@@ -55,12 +110,6 @@ def get_comment(request):
 
             result = {'code': 200, 'data':lis}
             return JsonResponse(result)
-
-
-
-
-                # result={'code':200,'data':'type错误'}
-                # return JsonResponse(result)
 
 
         except Exception as e:
@@ -92,4 +141,5 @@ def get_comment(request):
             print(e)
             result = {'code':20000,'data':'error'}
             return JsonResponse(result)
+
 

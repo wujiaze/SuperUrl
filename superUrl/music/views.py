@@ -20,9 +20,9 @@ def search_music(request):
         # todo 步骤3 交给爬虫 结束
         save_history(request, 'music')
 
-        print('进入get')
+        # print('进入get')
         keyword = request.GET.get('keyword')
-        print(keyword)
+        # print(keyword)
 
         r = redis.Redis(host='127.0.0.1', port=6379, db=2)
 
@@ -33,20 +33,22 @@ def search_music(request):
 
             res = {
                 'code': 200,
-                'data': res_list
+                'data': [{'music:search':res_list}],
+                'type':'music',
             }
 
             return JsonResponse(res)
 
         else:
             try:
-                print('redis不存在')
+                # print('redis不存在')
                 kw = MusicKeyword.objects.get(keyword=keyword)
                 info_list = kw.musicinformation.all()
                 all_list = []
                 for item in info_list:
                     data_dict = {}
                     data_dict['name'] = item.name
+                    data_dict['star'] = item.star
                     data_dict['download_count'] = item.download_count
                     data_dict['star_one'] = item.star_one
                     data_dict['star_two'] = item.star_two
@@ -56,6 +58,7 @@ def search_music(request):
                     data_dict['star_avg'] = item.star_avg
                     data_dict['url'] = item.url
                     all_list.append(data_dict)
+
                 high = len(all_list) - 1
                 all_list = query_sort(all_list, 0, high)
 
@@ -65,7 +68,8 @@ def search_music(request):
 
                 result = {
                     'code': 200,
-                    'data': all_list
+                    'data': [{'music:search':all_list}],
+                    'type':'music'
                 }
 
                 return JsonResponse(result)
@@ -75,66 +79,66 @@ def search_music(request):
             except Exception as e:
                 # print('都不存在')
                 # print('----------------------------------------------')
-                # SpiderTask.objects.create(type='music', keyword=keyword)
+                SpiderTask.objects.create(type='music', keyword=keyword)
                 # # todo 爬虫接口
                 # # 爬虫存到数据库
-                # return JsonResponse({'code': 20000, 'eroor': '暂无资源'})
+                return JsonResponse({'code': 20000, 'eroor': '暂无资源'})
 
 
-                data = [{'name':'aaa1','url':'xxx1'},
-                        {'name':'aaa2','url':'xxx2'},
-                        {'name':'aaa3','url':'xxx3'}]
-                print('no redis , no mysql')
-                print(keyword)
-                try:
-                    print('create keyword')
-                    kw = MusicKeyword.objects.create(keyword=keyword)
-                except Exception as e:
-                    print('已经存在关键字')
-                    return JsonResponse({'code':20000,'error':'稍后访问'})
-                for i in data:
-                    try:
-                        music = MusicInformation.objects.create(name=i['name'],url=i['url'])
-                    except Exception as e:
-                        music = MusicInformation.objects.get(url=i['url'])
-                    kw.musicinformation.add(music)
-
-                kw = MusicKeyword.objects.get(keyword=keyword)
-                info_list = kw.musicinformation.all()
-                all_list = []
-                redis_list = []
-                for item in info_list:
-                    data_dict = {}
-                    data_dict['name'] = item.name
-                    data_dict['download_count'] = item.download_count
-                    data_dict['star_one'] = item.star_one
-                    data_dict['star_two'] = item.star_two
-                    data_dict['star_three'] = item.star_three
-                    data_dict['star_four'] = item.star_four
-                    data_dict['star_five'] = item.star_five
-                    data_dict['star_avg'] = item.star_avg
-                    data_dict['url'] = item.url
-                    all_list.append(data_dict)
-                    info = [str(item.name),
-                            str(item.download_count),
-                            str(item.star_one),
-                            str(item.star_two),
-                            str(item.star_three),
-                            str(item.star_four),
-                            str(item.star_five),
-                            str(item.star_avg),
-                            str(item.url)]
-                    res = ','.join(info)
-                    redis_list.append(res)
-                keep_time = 60 * 60 *24
-                r.lpush(keyword, redis_list)
-                r.expire(keyword,random.randint(keep_time,2*keep_time))
-
-                result = {
-                    'code': 200,
-                    'data': all_list
-                }
-                # result = {'code':20000,
-                #           'error':'暂无资源'}
-
-                return JsonResponse(result)
+                # data = [{'name':'aaa1','url':'xxx1'},
+                #         {'name':'aaa2','url':'xxx2'},
+                #         {'name':'aaa3','url':'xxx3'}]
+                # print('no redis , no mysql')
+                # print(keyword)
+                # try:
+                #     print('create keyword')
+                #     kw = MusicKeyword.objects.create(keyword=keyword)
+                # except Exception as e:
+                #     print('已经存在关键字')
+                #     return JsonResponse({'code':20000,'error':'稍后访问'})
+                # for i in data:
+                #     try:
+                #         music = MusicInformation.objects.create(name=i['name'],url=i['url'])
+                #     except Exception as e:
+                #         music = MusicInformation.objects.get(url=i['url'])
+                #     kw.musicinformation.add(music)
+                #
+                # kw = MusicKeyword.objects.get(keyword=keyword)
+                # info_list = kw.musicinformation.all()
+                # all_list = []
+                # redis_list = []
+                # for item in info_list:
+                #     data_dict = {}
+                #     data_dict['name'] = item.name
+                #     data_dict['download_count'] = item.download_count
+                #     data_dict['star_one'] = item.star_one
+                #     data_dict['star_two'] = item.star_two
+                #     data_dict['star_three'] = item.star_three
+                #     data_dict['star_four'] = item.star_four
+                #     data_dict['star_five'] = item.star_five
+                #     data_dict['star_avg'] = item.star_avg
+                #     data_dict['url'] = item.url
+                #     all_list.append(data_dict)
+                #     info = [str(item.name),
+                #             str(item.download_count),
+                #             str(item.star_one),
+                #             str(item.star_two),
+                #             str(item.star_three),
+                #             str(item.star_four),
+                #             str(item.star_five),
+                #             str(item.star_avg),
+                #             str(item.url)]
+                #     res = ','.join(info)
+                #     redis_list.append(res)
+                # keep_time = 60 * 60 *24
+                # r.lpush(keyword, redis_list)
+                # r.expire(keyword,random.randint(keep_time,2*keep_time))
+                #
+                # result = {
+                #     'code': 200,
+                #     'data': all_list
+                # }
+                # # result = {'code':20000,
+                # #           'error':'暂无资源'}
+                #
+                # return JsonResponse(result)

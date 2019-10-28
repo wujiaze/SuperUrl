@@ -21,7 +21,7 @@ def get_keylist(request):
     keep_time = 60 * 60 * 24
     if r.exists(keyword):
         res = r.get(keyword)
-        print(type(res.decode()))
+        # print(type(res.decode()))
         res_list = json.loads(res.decode())
 
         res = {

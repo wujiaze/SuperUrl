@@ -594,17 +594,21 @@
 
         var count11 = 1;
         var title1 = "搜索结果";
+        console.log(musics.length)
         if (musics.length === 1) {
+            var list1 = musics[0]["music:search"];
+            console.log(list1)
         } else {
             title1 = "新歌榜";
             count11 = 2
+            var list1 = musics[0]["music:new"];
         }
         var title2 = "热歌榜";
 
         $('#result_search').html($(index.music.html(count11, title1, title2)));
 
 
-        var list1 = musics[0]["music:new"];
+        //var list1 = musics[0]["music:new"];
         var html = '';
         for (let i = 0; i < list1.length; i++) {
             html += '<li class="music_item">';
@@ -640,7 +644,7 @@
             html += '</div>';
             html += '</li>';
             html += '<li>';
-            html += '<button class="btn">我要评价</button>';
+            html += '<button class="btn" id="btn_commit">我要评价</button>';
             html += '</li>';
             html += '</ul>';
             html += '</li>';
@@ -648,6 +652,12 @@
         // TODO选择起错误
         $('#result_search .left').append(html);
         // todo 绑定事件  点击下载  点击评分
+        $('#btn_commit').on("click",function(){
+             url = $(this).parent().children('a').href
+             console.log(url)
+             console.log(current_type)
+        });
+
 
         if (musics.length === 2) {
             html = '';

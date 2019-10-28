@@ -24,12 +24,18 @@ def get_history(request):
         res_list = []
         for item in history_list:
             res_list.append(item.keyword)
-
-        res = {
-            'code': 200,
-            'data': res_list
-        }
-        return JsonResponse(res)
+        if res_list:
+            res = {
+                'code': 200,
+                'data': res_list
+            }
+            return JsonResponse(res)
+        else:
+            res = {
+                'code': 20000,
+                'error':'暂无历史记录'
+            }
+            return JsonResponse(res)
     return JsonResponse({'code': 20000, 'error': 'not get'})
 
 
@@ -43,10 +49,17 @@ def save_history(request, type):
 
     history_list = user.history_set.all()  # jquery容器
     length = len(history_list)
-    if length > 15:
-        history_list = history_list[length - 15:]
-    for item in history_list:
-        if item.objects.keyword == keyword:
-            item.delete()
-            break
+    if length == 15:
+        for item in history_list:
+            if item.objects.keyword == keyword:
+                item.delete()
+                break
+        else:
+            history_list[0].delete()
+    elif 0 < length < 15:
+        for item in history_list:
+            if item.keyword == keyword:
+                item.delete()
+    elif length == 0:
+        pass
     history = History.objects.create(keyword=keyword, userprofile=user)
