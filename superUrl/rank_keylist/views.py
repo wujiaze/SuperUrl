@@ -1,4 +1,5 @@
 import json
+import random
 
 import redis
 from django.http import JsonResponse
@@ -67,7 +68,7 @@ def get_keylist(request):
 
         res = json.dumps(keylist)
         r.set(keyword, res)
-        r.expire(keyword, keep_time)
+        r.expire(keyword, random.randint(3*60*60,6*60*60))
 
         if keyword:
             res = {
