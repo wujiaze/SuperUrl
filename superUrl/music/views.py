@@ -58,6 +58,7 @@ def search_music(request):
                     data_dict['star_avg'] = item.star_avg
                     data_dict['url'] = item.url
                     all_list.append(data_dict)
+
                 high = len(all_list) - 1
                 all_list = query_sort(all_list, 0, high)
 
