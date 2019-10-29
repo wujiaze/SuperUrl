@@ -22,7 +22,7 @@ def search_music(request):
 
         # print('进入get')
         keyword = request.GET.get('keyword')
-        # print(keyword)
+        print(keyword)
 
         r = redis.Redis(host='127.0.0.1', port=6379, db=2)
 
@@ -43,12 +43,15 @@ def search_music(request):
             try:
                 # print('redis不存在')
                 kw = MusicKeyword.objects.get(keyword=keyword)
+                # print('kw: ',kw)
                 info_list = kw.musicinformation.all()
+                # print('info_lsit: ',info_list)
                 all_list = []
                 for item in info_list:
                     data_dict = {}
                     data_dict['name'] = item.name
                     data_dict['star'] = item.star
+                    data_dict['time'] = item.time
                     data_dict['download_count'] = item.download_count
                     data_dict['star_one'] = item.star_one
                     data_dict['star_two'] = item.star_two

@@ -34,11 +34,11 @@ class QQYinyueSpider:
     def run(self,word):
 
         word = parse.quote(word)
-        print(word)
+        # print(word)
         url = self.url.format(word)
-        print(url)
+        # print(url)
         res = self.get_html(url)
-        print(res)
+        # print(res)
         return res
 
 if __name__ == '__main__':
