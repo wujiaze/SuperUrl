@@ -6,7 +6,7 @@ from django.db import models
 class MusicInformation(models.Model):
     name = models.CharField(max_length=100,null=False,verbose_name='音乐名')
     star = models.CharField(max_length=500,null=False,default='佚名',verbose_name='歌手')
-    download_count = models.IntegerField(default=0,verbose_name='下载量')
+    download_count = models.IntegerField(default=100,verbose_name='下载量')
     time = models.CharField(max_length=20,default='未知',verbose_name='时长')
     star_one = models.IntegerField(default=0,verbose_name='一星数')
     star_two = models.IntegerField(default=0,verbose_name='二星数')
