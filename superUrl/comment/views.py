@@ -95,18 +95,21 @@ def get_comment(request):
 
             Comment.objects.create(url=url,content=content,username=user.phonenumber)
             #返回content和create
-            comment=Comment.objects.all(url=url)
+            # comment=Comment.objects.all(url=url)
             lis=[]
-            for i in comment:
-                dic = {}
-                phonenumber=i.phonenumber
-                phone=UserProfile.objects.get(phonenumber=phonenumber)
-                print('phone对象是',phone)
-                dic['nickname'] = phone.nickname
-                dic['avatar'] = phone.avatar
-                dic['content']=i.content
-                dic['createtime']=i.createtime
-                lis.append(dic)
+            # for i in comment:
+
+
+            #不太清楚需要返回什么数据
+            dic = {}
+            phonenumber=user.phonenumber
+            phone=UserProfile.objects.get(phonenumber=phonenumber)
+            print('phone对象是',phone)
+            dic['nickname'] = phone.nickname
+            dic['avatar'] = phone.avatar
+            # dic['content']=i.content
+            # dic['createtime']=i.createtime
+            lis.append(dic)
 
             result = {'code': 200, 'data':lis}
             return JsonResponse(result)

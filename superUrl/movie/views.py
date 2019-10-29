@@ -51,7 +51,7 @@ def movie(request):
         else:
             try:
                 print('redis不存在')
-                kw = MovieInfomation.objects.get(keyword=keyword)
+                kw = MovieKeyword.objects.get(keyword=keyword_2)
                 print(kw)
                 info_list = kw.movieInfomation.all()
                 all_list = []
@@ -80,7 +80,8 @@ def movie(request):
 
                 result = {
                     'code': 200,
-                    'data': all_list
+                    'data': [{'movie:search':all_list}],
+                    'type': 'movie'
                 }
 
                 return JsonResponse(result)
@@ -93,28 +94,28 @@ def movie(request):
                 # # todo 爬虫接口
                 # # 爬虫存到数据库
                 # return JsonResponse({'code': 20000, 'eroor': '暂无资源'})
+                print(e)
 
-
-                data = [{'name':'aaa1','url':'xxx1'},
-                        {'name':'aaa2','url':'xxx2'},
-                        {'name':'aaa3','url':'xxx3'}]
-                print('no redis , no mysql')
-                print(keyword)
-                try:
-                    print('create keyword')
-                    kw = MovieKeyword.objects.create(keyword=keyword)
-                except Exception as e:
-                    print('已经存在关键字')
-                    return JsonResponse({'code':20000,'error':'稍后访问'})
-                for i in data:
-                    try:
-                        movie = MovieInfomation.objects.create(name=i['name'],url=i['url'])
-                    except Exception as e:
-                        movie = MovieInfomation.objects.get(url=i['url'])
-                    kw.movieInfomation.add(movie)
-
-                # kw = MovieKeyword.objects.get(keyword=keyword)
-                # info_list = kw.movieInfomation.all()
+                # data = [{'name':'bbb1','url':'xxx1'},
+                #         {'name':'bbb2','url':'xxx2'},
+                #         {'name':'bbb3','url':'xxx3'}]
+                # print('no redis , no mysql')
+                # print(keyword)
+                # try:
+                #     print('create keyword')
+                #     kw = MovieKeyword.objects.create(keyword=keyword)
+                # except Exception as e:
+                #     print('已经存在关键字')
+                #     return JsonResponse({'code':20000,'error':'稍后访问'})
+                # for i in data:
+                #     try:
+                #         movie = MovieInfomation.objects.create(name=i['name'],url=i['url'])
+                #     except Exception as e:
+                #         movie = MovieInfomation.objects.get(url=i['url'])
+                #     kw.movieInfomation.add(movie)
+                #
+                # # kw = MovieKeyword.objects.get(keyword=keyword)
+                # # info_list = kw.movieInfomation.all()
                 # all_list = []
                 # redis_list = []
                 # for item in info_list:
@@ -150,14 +151,14 @@ def movie(request):
                 # r.lpush(keyword, redis_list)
                 # r.expire(keyword,random.randint(keep_time,2*keep_time))
 
-                result = {
-                    'code': 200,
-                    'data': all_list
-                }
-                # result = {'code':20000,
-                #           'error':'暂无资源'}
-
-                return JsonResponse(result)
+                # result = {
+                #     'code': 200,
+                #     'data': all_list
+                # }
+                # # result = {'code':20000,
+                # #           'error':'暂无资源'}
+                #
+                # return JsonResponse(result)
 
 
 
