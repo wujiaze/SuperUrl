@@ -73,30 +73,43 @@ def search_picture(request):
             except Exception as e:
                 # print('都不存在')
                 # print('----------------------------------------------')
-                # SpiderTask.objects.create(type='picture', keyword=keyword)
-                # # todo 爬虫接口
-                # # 爬虫存到数据库
-                # return JsonResponse({'code': 20000, 'eroor': '暂无资源'})
+                try:
+                    task = SpiderTask.objects.filter(type='picture',keyword=keyword)
+                    # print('task: ',task)
+                    # print('长度: ',len(task))
+                    if not len(task):
+                        # print('不存在关键字')
+                        SpiderTask.objects.create(type='picture', keyword=keyword)
+                except Exception as e:
+                    pass
+                # print(task)
+                # if not len(task):
+                #     print('不存在关键字')
+                #     SpiderTask.objects.create(type='picture', keyword=keyword)
+
+                # todo 爬虫接口
+                # 爬虫存到数据库
+                return JsonResponse({'code': 20000, 'eroor': '暂无资源'})
 
 
-                data = [{'describe':'万圣节','url':'https://stock.tuchong.com/image?imageId=462030668900860178&term=&requestId=&searchId='},
-                        {'describe':'万圣节','url':'https://stock.tuchong.com/image?imageId=400180227832283149&term=&requestId=&searchId='},
-                        {'describe':'万圣节','url':'https://stock.tuchong.com/image?imageId=455008010808066106&term=&requestId=&searchId='}]
+                # data = [{'describe':'万圣节','url':'https://stock.tuchong.com/image?imageId=462030668900860178&term=&requestId=&searchId='},
+                #         {'describe':'万圣节','url':'https://stock.tuchong.com/image?imageId=400180227832283149&term=&requestId=&searchId='},
+                #         {'describe':'万圣节','url':'https://stock.tuchong.com/image?imageId=455008010808066106&term=&requestId=&searchId='}]
                 # print('no redis , no mysql')
                 # print(keyword)
-                try:
-                    print('create keyword')
-                    kw = PictureKeyword.objects.create(keyword=keyword)
-                except Exception as e:
-                    print('已经存在关键字')
-                    return JsonResponse({'code':20000,'error':'稍后访问'})
-                for i in data:
-                    try:
-                        picture = PictureInformation.objects.create(describe=i['describe'],url=i['url'])
-                    except Exception as e:
-                        picture = PictureInformation.objects.get(url=i['url'])
-                    kw.pictureinformation.add(picture)
-                #
+                # try:
+                #     print('create keyword')
+                #     kw = PictureKeyword.objects.create(keyword=keyword)
+                # except Exception as e:
+                #     print('已经存在关键字')
+                #     return JsonResponse({'code':20000,'error':'稍后访问'})
+                # for i in data:
+                #     try:
+                #         picture = PictureInformation.objects.create(describe=i['describe'],url=i['url'])
+                #     except Exception as e:
+                #         picture = PictureInformation.objects.get(url=i['url'])
+                #     kw.pictureinformation.add(picture)
+                # #
                 # kw = MusicKeyword.objects.get(keyword=keyword)
                 # info_list = kw.musicinformation.all()
                 # all_list = []
@@ -116,12 +129,12 @@ def search_picture(request):
                 # r.lpush(keyword, redis_list)
                 # r.expire(keyword,random.randint(keep_time,2*keep_time))
                 #
-                print(data)
-                result = {
-                    'code': 200,
-                    'data': [{'search:picture':data}]
-                }
+                # print(data)
+                # result = {
+                #     'code': 200,
+                #     'data': [{'search:picture':data}]
+                # }
                 # result = {'code':20000,
                 #           'error':'暂无资源'}
 
-                return JsonResponse(result)
+                # return JsonResponse(result)

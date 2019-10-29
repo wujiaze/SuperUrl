@@ -79,11 +79,23 @@ def search_music(request):
             except Exception as e:
                 # print('都不存在')
                 # print('----------------------------------------------')
-                SpiderTask.objects.create(type='music', keyword=keyword)
-                # # todo 爬虫接口
-                # # 爬虫存到数据库
+                try:
+                    task = SpiderTask.objects.filter(type='music', keyword=keyword)
+                    # print('task: ', task)
+                    # print('长度: ', len(task))
+                    if not len(task):
+                        # print('不存在关键字')
+                        SpiderTask.objects.create(type='music', keyword=keyword)
+                except Exception as e:
+                    pass
+
+
                 return JsonResponse({'code': 20000, 'eroor': '暂无资源'})
 
+
+
+                # # todo 爬虫接口
+                # # 爬虫存到数据库
 
                 # data = [{'name':'aaa1','url':'xxx1'},
                 #         {'name':'aaa2','url':'xxx2'},

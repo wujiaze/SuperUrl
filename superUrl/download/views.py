@@ -6,6 +6,7 @@ from django.db.models import F
 
 
 # Create your views here.
+from picture.models import PictureInformation
 
 
 def add_download(request):
@@ -23,15 +24,51 @@ def add_download(request):
     if type == 'music':
         try:
             item = MusicInformation.objects.filter(url=url).update(download_count=F('download_count') + 1)
+
         except Exception as e:
             res = {
                 'code': 20000,
                 'error': '错误'
             }
             return JsonResponse(res)
+        try:
+            res = MusicInformation.objects.get(url=url)
+        except Exception as e:
+            res = {
+                'code': 20000,
+                'error': '错误'
+            }
+            return JsonResponse(res)
+
     elif type == 'movie':
         try:
             item = MovieInfomation.objects.filter(url=url).update(download_count=F('download_count') + 1)
+
+        except Exception as e:
+            res = {
+                'code': 20000,
+                'error': '错误'
+            }
+            return JsonResponse(res)
+        try:
+            res = MovieInfomation.objects.get(url=url)
+        except Exception as e:
+            res = {
+                'code': 20000,
+                'error': '错误'
+            }
+            return JsonResponse(res)
+    elif type == 'picture':
+        try:
+            item = PictureInformation.objects.filter(url=url).update(download_count=F('download_count')+1)
+        except Exception as e:
+            res = {
+                'code':20000,
+                'error':'错误'
+            }
+            return JsonResponse(res)
+        try:
+            res = PictureInformation.objects.get(url=url)
         except Exception as e:
             res = {
                 'code': 20000,
@@ -45,7 +82,7 @@ def add_download(request):
         }
         return JsonResponse(res)
 
-    count = item.download_count
+    count = res.download_count
     res = {
         'code': 200,
         'count': count
