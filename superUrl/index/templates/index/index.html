@@ -467,7 +467,21 @@
                         console.log(request.data);
                         showContent(request.data);
                     } else {
-                        console.log(request.error);
+                        // 本地获取
+                        var history = [];
+                        var current_history_index = window.localStorage.getItem('current_history_index');
+                        for (let index = 1; index <= history_max_count; index++) {
+                            item = window.localStorage.getItem('history' + index);
+                            {#console.log(item);#}
+                            if (item != null) {
+                                if (current_history_index - 1 >= index) {
+                                    history[current_history_index - 1 - index] = item
+                                } else {
+                                    history[current_history_index - 1 - index + history_max_count] = item
+                                }
+                            }
+                        }
+                        showContent(history);
                     }
                 }
             });
@@ -799,7 +813,7 @@
         html_body += '<img src="/static/image/亮星.png" alt="">';
         html_body += '<img src="/static/image/亮星.png" alt="">';
         html_body += '&nbsp;';
-        html_body += '<div class="comment_length" style="display: inline-block; width: '+ five_length +'px;"></div>';
+        html_body += '<div class="comment_length" style="display: inline-block; width: ' + five_length + 'px;"></div>';
         html_body += '&nbsp;';
         html_body += '<span>' + star_five + '</span>';
         html_body += '</li>';
@@ -810,7 +824,7 @@
         html_body += '<img src="/static/image/亮星.png" alt="">';
         html_body += '<img src="/static/image/亮星.png" alt="">';
         html_body += '&nbsp;';
-        html_body += '<div class="comment_length" style="display: inline-block;  width: '+ four_length +'px;"></div>';
+        html_body += '<div class="comment_length" style="display: inline-block;  width: ' + four_length + 'px;"></div>';
         html_body += '&nbsp;';
         html_body += '<span >' + star_four + '</span>';
         html_body += '</li>';
@@ -821,7 +835,7 @@
         html_body += '<img src="/static/image/亮星.png" alt="">';
         html_body += '<img src="/static/image/亮星.png" alt="">';
         html_body += '&nbsp;';
-        html_body += '<div class="comment_length" style="display: inline-block; width: '+ three_length +'px;"></div>';
+        html_body += '<div class="comment_length" style="display: inline-block; width: ' + three_length + 'px;"></div>';
         html_body += '&nbsp;';
         html_body += '<span>' + star_three + '</span>';
         html_body += '</li>';
@@ -832,7 +846,7 @@
         html_body += '<img src="/static/image/亮星.png" alt="">';
         html_body += '<img src="/static/image/亮星.png" alt="">';
         html_body += '&nbsp;';
-        html_body += '<div class="comment_length" style="display: inline-block; width: '+ two_length +'px;"></div>';
+        html_body += '<div class="comment_length" style="display: inline-block; width: ' + two_length + 'px;"></div>';
         html_body += '&nbsp;';
         html_body += '<span >' + star_two + '</span>';
         html_body += '</li>';
@@ -843,7 +857,7 @@
         html_body += '<img src="/static/image/亮星.png" alt="" style="opacity: 0;">';
         html_body += '<img src="/static/image/亮星.png" alt="">';
         html_body += '&nbsp;';
-        html_body += '<div class="comment_length" style="display: inline-block; width: '+ one_length +'px;"></div>';
+        html_body += '<div class="comment_length" style="display: inline-block; width: ' + one_length + 'px;"></div>';
         html_body += '&nbsp;';
         html_body += '<span>' + star_one + '</span>';
         html_body += '</li>';

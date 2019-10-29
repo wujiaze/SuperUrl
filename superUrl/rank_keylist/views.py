@@ -84,6 +84,38 @@ def get_keylist(request):
             return JsonResponse(res)
 
 
+# rank 返回形式
+"""
+{
+    code:
+    data:[
+        { "music:hot" : 
+            [
+                {具体信息},
+                {具体信息}
+            ]
+        },
+        { "music:new" : 
+            [
+                {具体信息},
+                {具体信息}
+            ]
+        }
+    ]
+}
+{
+    code:
+    data:[
+        { "music:search" : 
+            [
+                {具体信息},
+                {具体信息}
+            ]
+        }
+    ]
+}
+"""
+
 def get_rank(requesst):
     type = requesst.GET.get('type')
     r = redis.Redis(host='127.0.0.1', port=6379, db=1)
