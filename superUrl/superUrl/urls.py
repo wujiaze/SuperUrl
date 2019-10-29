@@ -31,8 +31,8 @@ urlpatterns = [
     url(r'^v1/history', include('history.urls')),
     url(r'^v1/download', include('download.urls')),
     url(r'^v1/rank_keylist', include('rank_keylist.urls')),
-    url(r'^v1/picture',include('picture.urls'))
-
+    url(r'^v1/picture',include('picture.urls')),
+    url(r'^v1/mytest', include('mytest.urls'))
 ]
 
 from django.conf.urls.static import static

@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'history',
     'comment',
     'rank_keylist',
-    'mytest'
+    'mytest',
 ]
 
 MIDDLEWARE = [
