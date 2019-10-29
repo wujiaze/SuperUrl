@@ -31,8 +31,13 @@ def add_download(request):
                 'error': '错误'
             }
             return JsonResponse(res)
+
         try:
             res = MusicInformation.objects.get(url=url)
+            count = res.star_one+res.star_two+res.star_three+res.star_four+res.star_five+res.download_count
+            total_star = res.star_one * 1 +res.star_tow * 2 +res.star_three * 3 +res.star_four * 4 +res.star_five *5+res.download_count * 3.5
+            res.star_avg = total_star / count
+            res.save()
         except Exception as e:
             res = {
                 'code': 20000,
@@ -52,6 +57,10 @@ def add_download(request):
             return JsonResponse(res)
         try:
             res = MovieInfomation.objects.get(url=url)
+            count = res.star_one + res.star_two + res.star_three + res.star_four + res.star_five + res.download_count
+            total_star = res.star_one * 1 + res.star_tow * 2 + res.star_three * 3 + res.star_four * 4 + res.star_five * 5 + res.download_count * 3.5
+            res.star_avg = total_star / count
+            res.save()
         except Exception as e:
             res = {
                 'code': 20000,
@@ -69,6 +78,10 @@ def add_download(request):
             return JsonResponse(res)
         try:
             res = PictureInformation.objects.get(url=url)
+            count = res.star_one + res.star_two + res.star_three + res.star_four + res.star_five + res.download_count
+            total_star = res.star_one * 1 + res.star_tow * 2 + res.star_three * 3 + res.star_four * 4 + res.star_five * 5 + res.download_count * 3.5
+            res.star_avg = total_star / count
+            res.save()
         except Exception as e:
             res = {
                 'code': 20000,

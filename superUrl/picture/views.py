@@ -18,9 +18,9 @@ def search_picture(request):
         # todo 步骤3 交给爬虫 结束
         save_history(request, 'picture')
 
-        print('进入get')
+        # print('进入get')
         keyword = request.GET.get('keyword')
-        print(keyword)
+        # print(keyword)
 
         r = redis.Redis(host='127.0.0.1', port=6379, db=2)
 
@@ -39,22 +39,22 @@ def search_picture(request):
 
         else:
             try:
-                print('redis不存在')
+                # print('redis不存在')
                 kw = PictureKeyword.objects.get(keyword=keyword)
-                print('kw',kw)
+                # print('kw',kw)
                 info_list = kw.pictureinformation.order_by('-download_count')[:100]
-                print('info_list',info_list)
+                # print('info_list',info_list)
                 all_list = []
                 for item in info_list:
                     data_dict = {}
                     data_dict['describe'] = item.describe
                     data_dict['download_count'] = item.download_count
                     data_dict['url'] = item.url
-                    print(data_dict)
+                    # print(data_dict)
                     all_list.append(data_dict)
                 high = len(all_list) - 1
                 # all_list = query_sort(all_list, 0, high)
-                print(all_list)
+                # print(all_list)
 
                 str_list = str(json.dumps(all_list))
                 keyword = "info:picture:" + keyword

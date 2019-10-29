@@ -36,10 +36,11 @@ def query_sort(data_list,low,high):
 def count_grate(item):
     downloads = int(item['download_count'])
     stars = int(item['star_one'])+ int(item['star_two']) + int(item['star_three']) + int(item['star_four']) + int(item['star_five'])
+    # star
     count = downloads + stars
     if count == 0:
         return 0
-    total_grade = (downloads * 3.5 + stars * int(item['star_avg'])) / count
+    total_grade = item.star_avg
     return total_grade
 
 
