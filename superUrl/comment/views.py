@@ -55,6 +55,7 @@ def get_comment(request):
         if type == "music":
             try:
                 music = MusicInformation.objects.filter(url=url)
+                print(music)
                 if star_val == 1:
                     music.update(star_one=F('star_one') + 1)
                 elif star_val == 2:

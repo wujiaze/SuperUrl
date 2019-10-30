@@ -56,8 +56,11 @@ def pushMysql(request, keyword):
     try:
         kw = MusicKeyword.objects.get(keyword=keyword)
     except:
-        kw = MusicKeyword.objects.create(keyword=keyword)
-
+        try:
+            kw = MusicKeyword.objects.create(keyword=keyword)
+        except Exception as e:
+            print('sssssss',e)
+            return
     # finger 判断
     for item in data:
         m = hashlib.md5()

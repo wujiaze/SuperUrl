@@ -62,4 +62,7 @@ def save_history(request, type):
                 item.delete()
     elif length == 0:
         pass
-    history = History.objects.create(keyword=keyword, userprofile=user)
+    try:
+        history = History.objects.create(keyword=keyword, userprofile=user)
+    except Exception as e:
+        print('history erro : ',e)
