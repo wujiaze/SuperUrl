@@ -154,7 +154,6 @@ def get_comment(request):
     elif request.method == 'GET':
         url = request.GET.get('url')
         type = request.GET.get('type')
-
         try:
             l_com = Comment.objects.filter(url=url)
             lis = []
