@@ -58,7 +58,7 @@ def search_music(request):
                     data_dict['star_three'] = item.star_three
                     data_dict['star_four'] = item.star_four
                     data_dict['star_five'] = item.star_five
-                    data_dict['star_avg'] = str(item.star_avg).
+                    data_dict['star_avg'] = "{:.1f}".format(float(item.star_avg))
                     data_dict['url'] = item.url
                     all_list.append(data_dict)
 
@@ -96,7 +96,3 @@ def search_music(request):
 
                 # # todo 爬虫接口
                 # # 爬虫存到数据库
-
-
-
-

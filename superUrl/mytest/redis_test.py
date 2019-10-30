@@ -44,6 +44,16 @@ data = [
 r.set('music:new', json.dumps(data))
 r.set('music:hot', json.dumps(data))
 
-
+data = []
+for i in range(200):
+    index_pic = str(i % 12 + 1)
+    hre = "/static/image/images/image" + index_pic + ".jpg"
+    data.append({
+        "url": hre,
+        "describe": "彩虹",
+        "download_count": "1",
+    })
+r.set('picture:search',json.dumps(data))
+# r.set('info:picture:美图', json.dumps(data))
 
 print('成功')

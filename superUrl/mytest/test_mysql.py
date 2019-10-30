@@ -16,5 +16,3 @@ r = redis.Redis(db=1)
 
 # redis 中 新歌，热歌，搜索结果 的 存储形式 和返回形式
 
-
-pushMysql("周杰伦")

@@ -17,7 +17,7 @@
 #news_pl .news_comment > li {
     margin: 5px 0px 10px 10px;
 
-
+    border-bottom: 1px solid #999999;
 }
 
 #news_pl .news_comment > li > img {
@@ -36,7 +36,7 @@
 #news_pl .news_comment > li > p {
     margin: 5px 0px 0px 45px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #999999;
+
 }
 
 #news_pl .news_btn {

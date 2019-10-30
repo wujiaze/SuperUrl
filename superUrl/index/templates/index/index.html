@@ -175,7 +175,7 @@
     <link rel="stylesheet" href="/static/css/simplelightbox.min.css">
     <style>
         #dowebok {
-            width: 1950px;
+            width: 2250px;
             margin: 10px 0px 10px 10px;
             font-size: 0;
         }
@@ -342,7 +342,10 @@
     });
     // 输入框失去焦点
     $('#inp_search').on('focusout', function () {
-        $('#keylist').stop(true, true).slideUp(300);
+        setTimeout(function () {
+            $('#keylist').stop(true, true).slideUp(300);
+        }, 100);
+
     });
     // 获取实时关键字
     $('#inp_search').on('input', function (event) {
@@ -464,7 +467,7 @@
                 },
                 success: function (request) {
                     if (request.code === 200) {
-                        console.log(request.data);
+                        request.data = request.data.reverse()
                         showContent(request.data);
                     } else {
                         // 本地获取
@@ -547,6 +550,7 @@
     // 搜索具体内容
     function search() {
         $('#result_search').css('display', 'none');
+        $('#dowebok').css('display', 'none');
         var inp = $('#inp_search').val();
         var url = '';
         if (inp == null || inp === "") {
@@ -628,7 +632,7 @@
             html += '<li class="music_item">';
             html += '<ul>';
             html += '<li>' + Number(i + 1) + '</li>';
-            html += '<li><a href="#">' + list1[i]["name"] + '</a></li>';
+            html += '<li><a href="' + list1[i]['url'] + '">' + list1[i]["name"] + '</a></li>';
             html += '<li>' + list1[i]["star"] + '</li>';
             var tim = list1[i]["time"];
             if (tim === undefined || tim == null)
@@ -638,7 +642,8 @@
             html += '<div class="score">';
             html += ' <div>';
             html += '<span>' + list1[i]["star_avg"] + '</span>';
-            var num1 = Math.ceil(list1[i]['star_avg']);
+            var num1 = Math.round(list1[i]['star_avg']);
+            console.log("评分星数" + num1)
             for (let j = 0; j < num1; j++) {
                 html += '<img src="/static/image/亮星.png" alt="">';
             }
@@ -683,7 +688,8 @@
                 html += '<div class="score">';
                 html += ' <div>';
                 html += '<span>' + list1[i]["star_avg"] + '</span>';
-                var num1 = Math.ceil(list1[i]['star_avg']);
+                var num1 = Math.round(list1[i]['star_avg']);
+
                 for (let j = 0; j < num1; j++) {
                     html += '<img src="/static/image/亮星.png" alt="">';
                 }
@@ -711,23 +717,23 @@
             $('#result_search .right').append(html)
         }
 
-        var messages_list = [
-            {
-                'publisher': 'wjz',
-                'created_time': '2019-12-20',
-                'publisher_avatar': '/static/image/getAvatar.jpg',
-                'content': "sdfasdfsdfds"
-            },
-            {
-                'publisher': 'wjz',
-                'created_time': '2019-12-20',
-                'publisher_avatar': '/static/image/getAvatar.jpg',
-                'content': "sdfasdfsdfds"
-            },
-        ];
-        var prev = $('#result_search .left>li:nth-of-type(2)');
-        console.log(prev)
-        f(messages_list, prev, 2);
+        {#var messages_list = [#}
+        {#    {#}
+        {#        'publisher': 'wjz',#}
+        {#        'created_time': '2019-12-20',#}
+        {#        'publisher_avatar': '/static/image/getAvatar.jpg',#}
+        {#        'content': "sdfasdfsdfds"#}
+        {#    },#}
+        {#    {#}
+        {#        'publisher': 'wjz',#}
+        {#        'created_time': '2019-12-20',#}
+        {#        'publisher_avatar': '/static/image/getAvatar.jpg',#}
+        {#        'content': "sdfasdfsdfds"#}
+        {#    },#}
+        {#];#}
+        {#var prev = $('#result_search .left>li:nth-of-type(2)');#}
+        {#console.log(prev)#}
+        {#f(messages_list, prev, 2);#}
 
         // 点击下载
         $('#left_first .music_item>ul>li:nth-of-type(2)>a').on("click", function () {
@@ -756,8 +762,10 @@
         $('#left_first .music_item>ul>li:nth-of-type(6)>button').on("click", function () {
                 var url = $(this).parent().parent().children(2).children().attr('href')
                 var data = {
-                    url: url
+                    url: url,
+                    type: current_type
                 };
+                var prev = $(this).parent().parent().parent()
                 $.ajax({
                     type: 'get',
                     contentType: "application/json",
@@ -768,12 +776,9 @@
                         {#console.log(result);#}
                         if (result.code === 200) {
                             {#alert('下载成功')#}
-                            var messages_list = result.data;
-                            var prev = $(this).parent().parent().parent();
-                            var count = result.data.messages_count;
+                            console.log(prev);
                             // 显示评论框
                             f(result, prev, url)
-
                         } else {
                             alert(result.error)
                         }
@@ -866,14 +871,15 @@
         html_body += '<ul class="news_comment">';
         for (let i = 0; i < messages_list.length; i++) {
             html_body += '<li>';
+            if (messages_list[i]['avatar'] === "") {
+                messages_list[i]['avatar'] = "/static/image/getAvatar.jpg"
+            }
             html_body += '<img class="news_avatar" src="' + messages_list[i]['avatar'] + '">';
             html_body += '<span class="news_nickname">' + messages_list[i]['nickname'] + '</span>';
             html_body += '&nbsp;@&nbsp;';
-            html_body += '<span class="news_time">' + messages_list[i]['time'] + '</span>';
+            html_body += '<span class="news_time">' + messages_list[i]['createtime'] + '</span>';
             html_body += '<p class="news_content">' + messages_list[i]['content'] + '</p>';
             html_body += '</li>';
-            html_body += '';
-            html_body += '';
         }
         html_body += '</ul>';
         html_body += '<h3>我要评价</h3>';
@@ -896,7 +902,8 @@
         editor.create();
         // 关闭按钮
         $('#news_pl #news_close').on('click', function () {
-            $('#news_pl').css('display', 'none');
+            {#console.log(111)#}
+            $('#news_pl').remove()
         });
         var is_click = false;
         // 评星事件
@@ -907,48 +914,36 @@
                     $('#news_pl .my_comment_xing').children().eq(i).attr('src', "/static/image/亮星.png")
                 }
             }
-
-
         });
         $('#news_pl .my_comment_xing img').on('mouseout', function () {
             if (!is_click) {
                 $('#news_pl .my_comment_xing').children().attr('src', "/static/image/空星.png")
             }
         });
+        var num = 3;
         $('#news_pl .my_comment_xing img').on('click', function () {
             is_click = true;
             $('#news_pl .my_comment_xing').children().attr('src', "/static/image/空星.png");
             for (let i = 0; i < $(this).index() + 1; i++) {
                 $('#news_pl .my_comment_xing').children().eq(i).attr('src', "/static/image/亮星.png")
             }
-            // 提交评星
-            var data = {
-                url: url
-            };
-            $.ajax({
-                type: 'get',
-                contentType: "application/json",
-                dataType: "json",
-                url: settings_url + "comment",
-                data: data,
-                success: function (result, status, xhr) {
-                    {#console.log(result);#}
-                    if (result.code === 200) {
-                        alert('评星成功')
-                    } else {
-                        alert(result.error)
-                    }
-                }
-            });
+            num = $(this).index() + 1
         });
 
         //
         $('#news_pl #news_btn').on('click', function () {
+            var btn = $(this)
             // 提交数据(评论)
             // 刷新评论表
+            if (editor.txt.text() == "") {
+                alert("评论不能为空")
+                return
+            }
             var data = {
                 url: url,
                 content: editor.txt.html(),
+                num: num,
+                type: current_type,
             };
             var token = window.localStorage.getItem('superUrl_token');
             $.ajax({
@@ -956,7 +951,7 @@
                 contentType: "application/json",
                 dataType: "json",
                 url: settings_url + "comment",
-                data: data,
+                data: JSON.stringify(data),
                 beforeSend: function (request) {
                     request.setRequestHeader("Authorization", token);
                 },
@@ -966,7 +961,8 @@
                         {#var prev = prev;#}
                         {#var url = url;#}
                         // 显示评论框
-                        f(result, prev, url)
+                        $('#news_pl').remove();
+                        f(result, prev, url);
                     } else {
                         alert(result.error)
                     }
@@ -978,6 +974,7 @@
 
     // 显示图片
     function showPicture(pictures) {
+        var pictures = pictures[0]["picture:search"];
         $('#result_search').css('display', 'none');
         if (pictures == null || pictures.length === 0) {
             $('#dowebok').css('display', 'none');
@@ -1013,7 +1010,7 @@
                 success: function (result, status, xhr) {
                     {#console.log(result);#}
                     if (result.code === 200) {
-                        alert('下载成功')
+                        {#alert('下载成功')#}
                     } else {
                         alert(result.error)
                     }

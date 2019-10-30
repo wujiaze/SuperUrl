@@ -9,6 +9,7 @@ from keylist_tools.wangyi import QQYinyueSpider
 from keylist_tools.maoyan import MaoyanSpider
 from keylist_tools.duyyy_movie import DutttSpider
 
+
 # Create your views here.
 
 def get_keylist(request):
@@ -54,8 +55,8 @@ def get_keylist(request):
 
         else:
             res = {
-                'code':20000,
-                'error':'暂无数据'
+                'code': 20000,
+                'error': '暂无数据'
             }
             return JsonResponse(res)
 
@@ -68,7 +69,7 @@ def get_keylist(request):
 
         res = json.dumps(keylist)
         r.set(keyword, res)
-        r.expire(keyword, random.randint(3*60*60,6*60*60))
+        r.expire(keyword, random.randint(3 * 60 * 60, 6 * 60 * 60))
 
         if keyword:
             res = {
@@ -78,8 +79,8 @@ def get_keylist(request):
             return JsonResponse(res)
         else:
             res = {
-                'code':20000,
-                'error':'暂无数据'
+                'code': 20000,
+                'error': '暂无数据'
             }
             return JsonResponse(res)
 
@@ -116,6 +117,7 @@ def get_keylist(request):
 }
 """
 
+
 def get_rank(requesst):
     type = requesst.GET.get('type')
     r = redis.Redis(host='127.0.0.1', port=6379, db=1)
@@ -148,6 +150,22 @@ def get_rank(requesst):
         if r.exists('movie:hot'):
             hot_list = json.loads(r.get('movie:hot').decode())  # [{},{},{}]
             res_list.append({'movie:hot': hot_list})
+        if res_list:
+            result = {
+                'code': 200,
+                'type': type,
+                'data': res_list
+            }
+        else:
+            result = {
+                'code': 20000,
+                'error': '暂无榜单'
+            }
+        return JsonResponse(result)
+    elif type == 'picture':
+        if r.exists('picture:search'):
+            new_list = json.loads(r.get('picture:search').decode())  # [{},{},{}]
+            res_list.append({'picture:search': new_list})
         if res_list:
             result = {
                 'code': 200,
