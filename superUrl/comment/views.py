@@ -175,7 +175,6 @@ def get_comment(request):
                     print(info)
                 except Exception as e:
                     return JsonResponse({"code": 20000})
-
                 data = {
                     'code': 200,
                     "messages_count": len(lis),
