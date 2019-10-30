@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'btoken',
     'history',
     'comment',
-    'rank_keylist'
+    'rank_keylist',
+    'mytest',
 ]
 
 MIDDLEWARE = [

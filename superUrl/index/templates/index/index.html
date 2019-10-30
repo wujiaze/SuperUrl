@@ -173,9 +173,9 @@
     </style>
     <link rel="stylesheet" href="/static/css/music_result.css">
     <link rel="stylesheet" href="/static/css/simplelightbox.min.css">
-     <style>
+    <style>
         #dowebok {
-            width: 100%;
+            width: 1950px;
             margin: 10px 0px 10px 10px;
             font-size: 0;
         }
@@ -196,6 +196,9 @@
             height: 150px;
         }
     </style>
+    <link rel="stylesheet" href="/static/css/comment.css">
+    <script src="/static/js/wangEditor.js"></script>
+
 </head>
 
 <body>
@@ -464,7 +467,21 @@
                         console.log(request.data);
                         showContent(request.data);
                     } else {
-                        console.log(request.error);
+                        // 本地获取
+                        var history = [];
+                        var current_history_index = window.localStorage.getItem('current_history_index');
+                        for (let index = 1; index <= history_max_count; index++) {
+                            item = window.localStorage.getItem('history' + index);
+                            {#console.log(item);#}
+                            if (item != null) {
+                                if (current_history_index - 1 >= index) {
+                                    history[current_history_index - 1 - index] = item
+                                } else {
+                                    history[current_history_index - 1 - index + history_max_count] = item
+                                }
+                            }
+                        }
+                        showContent(history);
                     }
                 }
             });
@@ -583,6 +600,7 @@
 
     // 显示音乐
     function showMusic(musics) {
+        $('#dowebok').css('display', 'none');
         var html = '';
         if (musics == null || musics.length === 0) {
             $('#result_search').html(html);
@@ -591,30 +609,26 @@
         }
         $('#result_search').css('display', 'block');
 
-
         var count11 = 1;
         var title1 = "搜索结果";
-        console.log(musics.length)
         if (musics.length === 1) {
             var list1 = musics[0]["music:search"];
-            console.log(list1)
         } else {
             title1 = "新歌榜";
-            count11 = 2
+            count11 = 2;
             var list1 = musics[0]["music:new"];
         }
         var title2 = "热歌榜";
 
         $('#result_search').html($(index.music.html(count11, title1, title2)));
 
-
-        //var list1 = musics[0]["music:new"];
+        //' + list1[i]["url"] + '
         var html = '';
         for (let i = 0; i < list1.length; i++) {
             html += '<li class="music_item">';
             html += '<ul>';
             html += '<li>' + Number(i + 1) + '</li>';
-            html += '<li><a href="' + list1[i]["url"] + '">' + list1[i]["name"] + '</a></li>';
+            html += '<li><a href="#">' + list1[i]["name"] + '</a></li>';
             html += '<li>' + list1[i]["star"] + '</li>';
             var tim = list1[i]["time"];
             if (tim === undefined || tim == null)
@@ -644,24 +658,17 @@
             html += '</div>';
             html += '</li>';
             html += '<li>';
-            html += '<button class="btn" id="btn_commit">我要评价</button>';
+            html += '<button class="btn">我要评价</button>';
             html += '</li>';
             html += '</ul>';
             html += '</li>';
         }
-        // TODO选择起错误
         $('#result_search .left').append(html);
-        // todo 绑定事件  点击下载  点击评分
-        $('#btn_commit').on("click",function(){
-             url = $(this).parent().children('a').href
-             console.log(url)
-             console.log(current_type)
-        });
 
-
+        //' + list1[i]["url"] + '
         if (musics.length === 2) {
-            html = '';
             list1 = musics[1]["music:hot"];
+            html = '';
             for (let i = 0; i < list1.length; i++) {
                 html += '<li class="music_item">';
                 html += '<ul>';
@@ -704,12 +711,274 @@
             $('#result_search .right').append(html)
         }
 
-        {#$('head').append($('<link rel="stylesheet" href="/static/css/music_result.css">'))#}
-        // todo 绑定事件  点击下载  点击评分
+        var messages_list = [
+            {
+                'publisher': 'wjz',
+                'created_time': '2019-12-20',
+                'publisher_avatar': '/static/image/getAvatar.jpg',
+                'content': "sdfasdfsdfds"
+            },
+            {
+                'publisher': 'wjz',
+                'created_time': '2019-12-20',
+                'publisher_avatar': '/static/image/getAvatar.jpg',
+                'content': "sdfasdfsdfds"
+            },
+        ];
+        var prev = $('#result_search .left>li:nth-of-type(2)');
+        console.log(prev)
+        f(messages_list, prev, 2);
+
+        // 点击下载
+        $('#left_first .music_item>ul>li:nth-of-type(2)>a').on("click", function () {
+            var data = {
+                type: current_type,
+                url: $(this).attr('href')
+            };
+            $.ajax({
+                type: 'get',
+                contentType: "application/json",
+                dataType: "json",
+                url: settings_url + "download",
+                data: data,
+                success: function (result, status, xhr) {
+                    {#console.log(result);#}
+                    if (result.code === 200) {
+                        alert('下载成功')
+                    } else {
+                        alert(result.error)
+                    }
+                }
+            });
+        });
+
+        // 点击评论
+        $('#left_first .music_item>ul>li:nth-of-type(6)>button').on("click", function () {
+                var url = $(this).parent().parent().children(2).children().attr('href')
+                var data = {
+                    url: url
+                };
+                $.ajax({
+                    type: 'get',
+                    contentType: "application/json",
+                    dataType: "json",
+                    url: settings_url + "comment",
+                    data: data,
+                    success: function (result, status, xhr) {
+                        {#console.log(result);#}
+                        if (result.code === 200) {
+                            {#alert('下载成功')#}
+                            var messages_list = result.data;
+                            var prev = $(this).parent().parent().parent();
+                            var count = result.data.messages_count;
+                            // 显示评论框
+                            f(result, prev, url)
+
+                        } else {
+                            alert(result.error)
+                        }
+                    }
+                });
+
+
+                console.log('评论')
+            }
+        );
     }
+
+    function f(result, prev, url) {
+        var messages_list = result.data;
+        var count = result.messages_count;
+        var star_one = result.star_one;
+        var star_two = result.star_two;
+        var star_three = result.star_three;
+        var star_four = result.star_four;
+        var star_five = result.star_five;
+        var all = Number(star_one) + Number(star_two) + Number(star_three) + Number(star_four) + Number(star_five)
+        var one_length = Number(star_one) / all * 400;
+        var two_length = Number(star_two) / all * 400;
+        var three_length = Number(star_three) / all * 400;
+        var four_length = Number(star_four) / all * 400;
+        var five_length = Number(star_five) / all * 400;
+
+
+        var html_body = '<div id="news_pl" style="display: block;">';
+        html_body += '<button id="news_close">关闭</button>';
+        html_body += '<h2>资源评论</h2>';
+        html_body += '<ul class="comment_star">';
+        html_body += '<li id="star_five">';
+        html_body += '<img src="/static/image/亮星.png" alt="">';
+        html_body += '<img src="/static/image/亮星.png" alt="">';
+        html_body += '<img src="/static/image/亮星.png" alt="">';
+        html_body += '<img src="/static/image/亮星.png" alt="">';
+        html_body += '<img src="/static/image/亮星.png" alt="">';
+        html_body += '&nbsp;';
+        html_body += '<div class="comment_length" style="display: inline-block; width: ' + five_length + 'px;"></div>';
+        html_body += '&nbsp;';
+        html_body += '<span>' + star_five + '</span>';
+        html_body += '</li>';
+        html_body += '<li id="star_four">';
+        html_body += '<img src="/static/image/亮星.png" alt="" style="opacity: 0;">';
+        html_body += '<img src="/static/image/亮星.png" alt="">';
+        html_body += '<img src="/static/image/亮星.png" alt="">';
+        html_body += '<img src="/static/image/亮星.png" alt="">';
+        html_body += '<img src="/static/image/亮星.png" alt="">';
+        html_body += '&nbsp;';
+        html_body += '<div class="comment_length" style="display: inline-block;  width: ' + four_length + 'px;"></div>';
+        html_body += '&nbsp;';
+        html_body += '<span >' + star_four + '</span>';
+        html_body += '</li>';
+        html_body += '<li id="star_three">';
+        html_body += '<img src="/static/image/亮星.png" alt="" style="opacity: 0;">';
+        html_body += '<img src="/static/image/亮星.png" alt="" style="opacity: 0;">';
+        html_body += '<img src="/static/image/亮星.png" alt="">';
+        html_body += '<img src="/static/image/亮星.png" alt="">';
+        html_body += '<img src="/static/image/亮星.png" alt="">';
+        html_body += '&nbsp;';
+        html_body += '<div class="comment_length" style="display: inline-block; width: ' + three_length + 'px;"></div>';
+        html_body += '&nbsp;';
+        html_body += '<span>' + star_three + '</span>';
+        html_body += '</li>';
+        html_body += '<li id="star_two">';
+        html_body += '<img src="/static/image/亮星.png" alt="" style="opacity: 0;">';
+        html_body += '<img src="/static/image/亮星.png" alt="" style="opacity: 0;">';
+        html_body += '<img src="/static/image/亮星.png" alt="" style="opacity: 0;">';
+        html_body += '<img src="/static/image/亮星.png" alt="">';
+        html_body += '<img src="/static/image/亮星.png" alt="">';
+        html_body += '&nbsp;';
+        html_body += '<div class="comment_length" style="display: inline-block; width: ' + two_length + 'px;"></div>';
+        html_body += '&nbsp;';
+        html_body += '<span >' + star_two + '</span>';
+        html_body += '</li>';
+        html_body += '<li id="star_one">';
+        html_body += '<img src="/static/image/亮星.png" alt="" style="opacity: 0;">';
+        html_body += '<img src="/static/image/亮星.png" alt="" style="opacity: 0;">';
+        html_body += '<img src="/static/image/亮星.png" alt="" style="opacity: 0;">';
+        html_body += '<img src="/static/image/亮星.png" alt="" style="opacity: 0;">';
+        html_body += '<img src="/static/image/亮星.png" alt="">';
+        html_body += '&nbsp;';
+        html_body += '<div class="comment_length" style="display: inline-block; width: ' + one_length + 'px;"></div>';
+        html_body += '&nbsp;';
+        html_body += '<span>' + star_one + '</span>';
+        html_body += '</li>';
+        html_body += '</ul>';
+        html_body += '<h3>目前已有<span id="my_comment_count">' + count + '</span>条评论</h3>';
+        html_body += '<ul class="news_comment">';
+        for (let i = 0; i < messages_list.length; i++) {
+            html_body += '<li>';
+            html_body += '<img class="news_avatar" src="' + messages_list[i]['avatar'] + '">';
+            html_body += '<span class="news_nickname">' + messages_list[i]['nickname'] + '</span>';
+            html_body += '&nbsp;@&nbsp;';
+            html_body += '<span class="news_time">' + messages_list[i]['time'] + '</span>';
+            html_body += '<p class="news_content">' + messages_list[i]['content'] + '</p>';
+            html_body += '</li>';
+            html_body += '';
+            html_body += '';
+        }
+        html_body += '</ul>';
+        html_body += '<h3>我要评价</h3>';
+        html_body += '<div class="my_comment_xing">';
+        html_body += '<img src="/static/image/空星.png">';
+        html_body += '<img src="/static/image/空星.png">';
+        html_body += '<img src="/static/image/空星.png">';
+        html_body += '<img src="/static/image/空星.png">';
+        html_body += '<img src="/static/image/空星.png">';
+        html_body += '</div>';
+        html_body += '<div class="news_editor">';
+        html_body += '</div>';
+        html_body += '<div class="news_btn">';
+        html_body += '<button id="news_btn">提交</button>';
+        html_body += '</div>';
+        html_body += '</div>';
+        prev.append(html_body);
+        var E = window.wangEditor;
+        editor = new E('#news_pl .news_editor');
+        editor.create();
+        // 关闭按钮
+        $('#news_pl #news_close').on('click', function () {
+            $('#news_pl').css('display', 'none');
+        });
+        var is_click = false;
+        // 评星事件
+        $('#news_pl .my_comment_xing img').on('mouseover', function () {
+            if (!is_click) {
+                $('#news_pl .my_comment_xing').children().attr('src', "/static/image/空星.png");
+                for (let i = 0; i < $(this).index() + 1; i++) {
+                    $('#news_pl .my_comment_xing').children().eq(i).attr('src', "/static/image/亮星.png")
+                }
+            }
+
+
+        });
+        $('#news_pl .my_comment_xing img').on('mouseout', function () {
+            if (!is_click) {
+                $('#news_pl .my_comment_xing').children().attr('src', "/static/image/空星.png")
+            }
+        });
+        $('#news_pl .my_comment_xing img').on('click', function () {
+            is_click = true;
+            $('#news_pl .my_comment_xing').children().attr('src', "/static/image/空星.png");
+            for (let i = 0; i < $(this).index() + 1; i++) {
+                $('#news_pl .my_comment_xing').children().eq(i).attr('src', "/static/image/亮星.png")
+            }
+            // 提交评星
+            var data = {
+                url: url
+            };
+            $.ajax({
+                type: 'get',
+                contentType: "application/json",
+                dataType: "json",
+                url: settings_url + "comment",
+                data: data,
+                success: function (result, status, xhr) {
+                    {#console.log(result);#}
+                    if (result.code === 200) {
+                        alert('评星成功')
+                    } else {
+                        alert(result.error)
+                    }
+                }
+            });
+        });
+
+        //
+        $('#news_pl #news_btn').on('click', function () {
+            // 提交数据(评论)
+            // 刷新评论表
+            var data = {
+                url: url,
+                content: editor.txt.html(),
+            };
+            var token = window.localStorage.getItem('superUrl_token');
+            $.ajax({
+                type: 'post',
+                contentType: "application/json",
+                dataType: "json",
+                url: settings_url + "comment",
+                data: data,
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", token);
+                },
+                success: function (result, status, xhr) {
+                    {#console.log(result);#}
+                    if (result.code === 200) {
+                        {#var prev = prev;#}
+                        {#var url = url;#}
+                        // 显示评论框
+                        f(result, prev, url)
+                    } else {
+                        alert(result.error)
+                    }
+                }
+            });
+        });
+    }
+
 
     // 显示图片
     function showPicture(pictures) {
+        $('#result_search').css('display', 'none');
         if (pictures == null || pictures.length === 0) {
             $('#dowebok').css('display', 'none');
             return
@@ -718,21 +987,44 @@
         }
         var html = '';
         for (let i = 0; i < pictures.length; i++) {
-            if (Math.random() * 2 > 1.5) {
-                html += '<a href="' + pictures[i] + '" >'
+            if (Math.random() * 2 > 1) {
+                html += '<a href="' + pictures[i]['url'] + '" >'
             } else {
-                html += '<a href="' + pictures[i] + '" class="big">'
+                html += '<a href="' + pictures[i]['url'] + '" class="big">'
             }
-            html += '<img src="' + pictures[i]+ '" alt="" title="图片描述">';
+            html += '<img src="' + pictures[i]['url'] + '" alt="" title="' + pictures[i]['describe'] + '">';
             html += '</a>'
         }
         $('#dowebok').html(html);
         $('#dowebok a').simpleLightbox();
+
+        // 点击下载
+        $('#dowebok a').on("click", function () {
+            var data = {
+                type: current_type,
+                url: $(this).attr('href')
+            };
+            $.ajax({
+                type: 'get',
+                contentType: "application/json",
+                dataType: "json",
+                url: settings_url + "download",
+                data: data,
+                success: function (result, status, xhr) {
+                    {#console.log(result);#}
+                    if (result.code === 200) {
+                        alert('下载成功')
+                    } else {
+                        alert(result.error)
+                    }
+                }
+            });
+        });
     }
 
     // 显示电影
     function showMovie(movies) {
-
+        $('#dowebok').css('display', 'none');
     }
 </script>
 </body>

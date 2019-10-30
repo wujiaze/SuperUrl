@@ -1,4 +1,5 @@
 import json
+import random
 
 import redis
 from django.http import JsonResponse
@@ -67,7 +68,7 @@ def get_keylist(request):
 
         res = json.dumps(keylist)
         r.set(keyword, res)
-        r.expire(keyword, keep_time)
+        r.expire(keyword, random.randint(3*60*60,6*60*60))
 
         if keyword:
             res = {
@@ -82,6 +83,38 @@ def get_keylist(request):
             }
             return JsonResponse(res)
 
+
+# rank 返回形式
+"""
+{
+    code:
+    data:[
+        { "music:hot" : 
+            [
+                {具体信息},
+                {具体信息}
+            ]
+        },
+        { "music:new" : 
+            [
+                {具体信息},
+                {具体信息}
+            ]
+        }
+    ]
+}
+{
+    code:
+    data:[
+        { "music:search" : 
+            [
+                {具体信息},
+                {具体信息}
+            ]
+        }
+    ]
+}
+"""
 
 def get_rank(requesst):
     type = requesst.GET.get('type')
